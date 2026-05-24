@@ -4,7 +4,7 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 // axios default configuration
-axios.defaults.baseURL = process.env.VITE_API_URL || 'http://localhost:3000/api';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 axios.defaults.withCredentials = true;
 
 export const AuthProvider = ({ children }) => {
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('v2/users/login', { email, password });
+      const response = await axios.post('api/v2/users/login', { email, password });
       if (response.data.success) {
         setUser(response.data);
         return { success: true };

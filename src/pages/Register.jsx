@@ -15,7 +15,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('v2/users/hashpass/', formData);
+      const response = await axios.post('api/v2/users/hashpass/', formData);
       if (response.data.success) {
         navigate('/login');
       }
