@@ -7,7 +7,7 @@ export default function Admin() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('/v2/users');
+      const response = await axios.get('v2/users');
       setUsers(response.data.data);
     } catch (error) {
       console.error('Failed to fetch users', error);
@@ -21,7 +21,7 @@ export default function Admin() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`/v2/users/${id}`);
+        await axios.delete(`v2/users/${id}`);
         fetchUsers();
       } catch (error) {
         console.error('Delete failed', error);
@@ -32,7 +32,7 @@ export default function Admin() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/v2/users/${editingUser._id}`, editingUser);
+      await axios.put(`v2/users/${editingUser._id}`, editingUser);
       setEditingUser(null);
       fetchUsers();
     } catch (error) {
@@ -73,22 +73,22 @@ export default function Admin() {
         <div className="edit-modal">
           <form onSubmit={handleUpdate}>
             <h3>Edit User</h3>
-            <input 
+            <input
               placeholder="Name"
-              value={editingUser.name || ''} 
+              value={editingUser.name || ''}
               onChange={e => setEditingUser({...editingUser, name: e.target.value})}
             />
-            <input 
+            <input
               placeholder="Username"
-              value={editingUser.username} 
+              value={editingUser.username}
               onChange={e => setEditingUser({...editingUser, username: e.target.value})}
             />
-            <input 
-              value={editingUser.email} 
+            <input
+              value={editingUser.email}
               onChange={e => setEditingUser({...editingUser, email: e.target.value})}
             />
-            <select 
-              value={editingUser.role} 
+            <select
+              value={editingUser.role}
               onChange={e => setEditingUser({...editingUser, role: e.target.value})}
             >
               <option value="user">User</option>
@@ -102,3 +102,4 @@ export default function Admin() {
     </div>
   );
 }
+

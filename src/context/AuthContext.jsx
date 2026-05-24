@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get('/v2/users/auth/me');
+      const response = await axios.get('v2/users/auth/me');
       if (response.data.success) {
         setUser(response.data);
       } else {
@@ -32,28 +32,27 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('/v2/users/login', { email, password });
+      const response = await axios.post('v2/users/login', { email, password });
       if (response.data.success) {
         setUser(response.data);
         return { success: true };
       }
     } catch (error) {
-      return { 
-        success: false, 
-        message: error.response?.data?.error || 'Login failed' 
+      return {
+        success: false,
+        message: error.response?.data?.error || error.response?.data?.message || 'Login failed'
       };
     }
   };
 
   const logout = async () => {
     try {
-      await axios.post('/v2/users/auth/logout');
+      await axios.post('v2/users/auth/logout');
       setUser(null);
     } catch (error) {
       console.error('Logout failed', error);
     }
   };
-
   return (
     <AuthContext.Provider value={{ user, loading, login, logout, checkAuth }}>
       {children}
