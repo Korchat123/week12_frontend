@@ -12,7 +12,7 @@ export default function Home() {
     if (user) {
       const fetchReminders = async () => {
         try {
-          const response = await axios.get('v2/notes');
+          const response = await axios.get('api/v2/notes');
           const now = new Date();
           // Filter future reminders and sort by date
           const future = response.data.data
