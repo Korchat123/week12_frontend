@@ -23,7 +23,7 @@ export default function Login() {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post('v2/users/google-login', {
+      const response = await axios.post('api/v2/users/google-login', {
         token: credentialResponse.credential
       });
       if (response.data.success) {

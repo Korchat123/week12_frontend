@@ -4,7 +4,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import './index.css'
 import App from './App.jsx'
 
-const GOOGLE_CLIENT_ID ="263479060504-lijn2p25pg9m83tivptpnr922t20b9c7.apps.googleusercontent.com"; // Need to replace with real ID
+const GOOGLE_CLIENT_ID = process.env.VITE_GOOGLE_CLIENT_ID; // Ensure this is set in your .env file as VITE_GOOGLE_CLIENT_ID=your_client_id
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

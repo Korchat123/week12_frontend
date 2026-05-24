@@ -21,7 +21,7 @@ export default function DiaryDashboard() {
 
   const fetchNotes = async () => {
     try {
-      const response = await axios.get('v2/notes');
+      const response = await axios.get('api/v2/notes');
       setNotes(response.data.data);
     } catch (error) {
       console.error('Failed to fetch notes', error);
@@ -36,9 +36,9 @@ export default function DiaryDashboard() {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`v2/notes/${editingId}`, formData);
+        await axios.put(`api/v2/notes/${editingId}`, formData);
       } else {
-        await axios.post('v2/notes', formData);
+        await axios.post('api/v2/notes', formData);
       }
       resetForm();
       fetchNotes();
@@ -56,7 +56,7 @@ export default function DiaryDashboard() {
     e.stopPropagation(); // Prevent loading into form when deleting
     if (!window.confirm('Delete this entry?')) return;
     try {
-      await axios.delete(`v2/notes/${id}`);
+      await axios.delete(`api/v2/notes/${id}`);
       if (editingId === id) resetForm();
       fetchNotes();
     } catch (error) {

@@ -4,7 +4,7 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 // axios default configuration
-axios.defaults.baseURL = 'https://backend-sh3b.onrender.com/api';
+axios.defaults.baseURL = process.env.VITE_API_URL || 'http://localhost:3000/api';
 axios.defaults.withCredentials = true;
 
 export const AuthProvider = ({ children }) => {
@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get('v2/users/auth/me');
+      const response = await axios.get('api/v2/users/auth/me');
       if (response.data.success) {
         setUser(response.data);
       } else {
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('v2/users/auth/logout');
+      await axios.post('api/v2/users/auth/logout');
       setUser(null);
     } catch (error) {
       console.error('Logout failed', error);
