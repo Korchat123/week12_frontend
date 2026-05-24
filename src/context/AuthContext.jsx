@@ -4,7 +4,7 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 // axios default configuration
-axios.defaults.baseURL = 'http://localhost:3000/api';
+axios.defaults.baseURL = 'https://backend-sh3b.onrender.com/api';
 axios.defaults.withCredentials = true;
 
 export const AuthProvider = ({ children }) => {
