@@ -7,7 +7,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h1>Welcome back, {user?.username}!</h1>
+        <h1>Welcome back, {user?.name}!</h1>
         <p className="subtitle">Manage your diaries and reminders.</p>
       </div>
       <DiaryDashboard />

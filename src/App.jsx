@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './component/Navbar';
 import ProtectedRoute from './component/ProtectedRoute';
@@ -64,6 +64,8 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        {/* Catch-all route to redirect unmatched paths to Home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   );
@@ -96,4 +98,3 @@ function App() {
 }
 
 export default App;
-

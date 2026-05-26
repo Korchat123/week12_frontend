@@ -61,3 +61,14 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+const initialized = useRef(false);
+
+useEffect(() => {
+  if (!initialized.current) {
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleCallbackResponse
+    });
+    initialized.current = true;
+  }
+}, []);
