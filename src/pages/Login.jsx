@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login, checkAuth } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -22,17 +21,11 @@ export default function Login() {
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      const response = await axios.post('api/v2/users/google-login', {
-        token: credentialResponse.credential
-      });
-      if (response.data.success) {
-        await checkAuth(); // Update user state in context
-        navigate('/dashboard');
-      }
-    } catch (err) {
-      setError('Google Login failed');
-      console.error(err);
+    const result = await googleLogin(credentialResponse.credential);
+    if (result.success) {
+      navigate('/dashboard');
+    } else {
+      setError(result.message);
     }
   };
 
@@ -68,4 +61,3 @@ export default function Login() {
     </div>
   );
 }
-

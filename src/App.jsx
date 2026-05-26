@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { DiaryProvider } from './context/DiaryContext';
 import Navbar from './component/Navbar';
 import ProtectedRoute from './component/ProtectedRoute';
 import Home from './pages/Home';
@@ -89,10 +90,12 @@ function urlBase64ToUint8Array(base64String) {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Navbar />
-        <AppContent />
-      </Router>
+      <DiaryProvider>
+        <Router>
+          <Navbar />
+          <AppContent />
+        </Router>
+      </DiaryProvider>
     </AuthProvider>
   );
 }

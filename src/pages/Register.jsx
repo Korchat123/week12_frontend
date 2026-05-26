@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
@@ -13,32 +12,24 @@ export default function Register() {
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { checkAuth } = useAuth();
+  const { register, googleLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('api/v2/users/hashpass/', formData);      
-      if (response.data.success) {
-        navigate('/login');
-      }
-    } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.message || 'Registration failed');
+    const result = await register(formData);
+    if (result.success) {
+      navigate('/login');
+    } else {
+      setError(result.message);
     }
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      const response = await axios.post('api/v2/users/google-login', {
-        token: credentialResponse.credential
-      });
-      if (response.data.success) {
-        await checkAuth(); // Update user state in context
-        navigate('/dashboard');
-      }
-    } catch (err) {
-      setError('Google Sign-up failed');
-      console.error(err);
+    const result = await googleLogin(credentialResponse.credential);
+    if (result.success) {
+      navigate('/dashboard');
+    } else {
+      setError(result.message);
     }
   };
 

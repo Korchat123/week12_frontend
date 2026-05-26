@@ -1,5 +1,7 @@
 # React + Vite
 
+This project follows a centralized state management pattern using React Context. For detailed architecture and development guidelines, please refer to [GEMINI.md](./GEMINI.md).
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
