@@ -369,3 +369,143 @@ hr {
   border-top: 1px solid #e5e7eb;
   margin: 1.5rem 0;
 }
+
+/* Mood Bar Styles */
+.mood-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.mood-bar {
+  display: flex;
+  height: 24px;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f3f4f6;
+  margin: 1rem 0;
+}
+
+.mood-bar-segment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.mood-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* Calendar Styles */
+.calendar-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-header button {
+  background: #f3f4f6;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.day-name {
+  font-weight: bold;
+  font-size: 0.75rem;
+  color: #6b7280;
+  padding-bottom: 0.5rem;
+}
+
+.calendar-day {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  position: relative;
+  background: #f9fafb;
+}
+
+.calendar-day.empty {
+  background: transparent;
+}
+
+.calendar-day.today {
+  background: #eff6ff;
+  border: 1px solid #3b82f6;
+  font-weight: bold;
+}
+
+.calendar-day.has-note {
+  background: #fefce8;
+}
+
+.note-indicator {
+  width: 4px;
+  height: 4px;
+  background: #f59e0b;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 4px;
+}
+
+/* Home Stats Layout */
+.home-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .home-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.upcoming-reminders-section {
+  margin-top: 3rem;
+}
+
+.upcoming-reminders-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}

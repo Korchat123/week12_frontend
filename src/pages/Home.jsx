@@ -1,31 +1,26 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { useDiary } from '../context/DiaryContext';
 import { Link } from 'react-router-dom';
+import MoodPercentageBar from '../component/MoodPercentageBar';
+import CalendarView from '../component/CalendarView';
 import '../component/Diary.css';
 
 export default function Home() {
   const { user } = useAuth();
+  const { notes } = useDiary();
   const [reminders, setReminders] = useState([]);
 
   useEffect(() => {
-    if (user) {
-      const fetchReminders = async () => {
-        try {
-          const response = await axios.get('api/v2/notes');
-          const now = new Date();
-          // Filter future reminders and sort by date
-          const future = response.data.data
-            .filter(n => n.reminderDate && new Date(n.reminderDate) > now)
-            .sort((a, b) => new Date(a.reminderDate) - new Date(b.reminderDate));
-          setReminders(future);
-        } catch (error) {
-          console.error('Failed to fetch reminders', error);
-        }
-      };
-      fetchReminders();
+    if (notes.length > 0) {
+      const now = new Date();
+      // Filter future reminders and sort by date
+      const future = notes
+        .filter(n => n.reminderDate && new Date(n.reminderDate) > now)
+        .sort((a, b) => new Date(a.reminderDate) - new Date(b.reminderDate));
+      setReminders(future);
     }
-  }, [user]);
+  }, [notes]);
 
   const getProximityClass = (dateString) => {
     const now = new Date();
@@ -76,27 +71,35 @@ export default function Home() {
   return (
     <div className="home-user">
       <header className="welcome-header">
-        <h1>Hello, {user.name || user.username}! 👋</h1>
-        <p>Here are your upcoming reminders:</p>
+        <h1>Hello, {user.name || user.username}! 🌸</h1>
+        <p>Your journey at a glance:</p>
       </header>
 
-      <div className="reminder-alerts">
-        {reminders.length > 0 ? (
-          <div className="reminder-grid">
-            {reminders.map(r => (
-              <Link key={r._id} to="/dashboard" className={`reminder-card ${getProximityClass(r.reminderDate)}`}>
-                <span className="prox-tag">{new Date(r.reminderDate).toLocaleDateString()}</span>
-                <h4>{r.topic}</h4>
-                <p>{r.detail.substring(0, 100)}{r.detail.length > 100 ? '...' : ''}</p>
-                <span className="time-tag">{new Date(r.reminderDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="no-reminders">
-            <p>You have no upcoming reminders. Go to your <Link to="/dashboard">Dashboard</Link> to add some!</p>
-          </div>
-        )}
+      <div className="home-stats-grid">
+        <MoodPercentageBar notes={notes} />
+        <CalendarView notes={notes} />
+      </div>
+
+      <div className="upcoming-reminders-section">
+        <h3>Upcoming Reminders</h3>
+        <div className="reminder-alerts">
+          {reminders.length > 0 ? (
+            <div className="reminder-grid">
+              {reminders.map(r => (
+                <Link key={r._id} to="/dashboard" className={`reminder-card ${getProximityClass(r.reminderDate)}`}>
+                  <span className="prox-tag">{new Date(r.reminderDate).toLocaleDateString()}</span>
+                  <h4>{r.topic}</h4>
+                  <p>{r.detail.substring(0, 100)}{r.detail.length > 100 ? '...' : ''}</p>
+                  <span className="time-tag">{new Date(r.reminderDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="no-reminders">
+              <p>You have no upcoming reminders. Go to your <Link to="/dashboard">Dashboard</Link> to add some!</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
