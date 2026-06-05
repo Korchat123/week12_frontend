@@ -1,7 +1,16 @@
 self.addEventListener('push', (event) => {
   const data = event.data.json();
+  const eventTime = data.eventAt
+    ? new Date(data.eventAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })
+    : null;
+  const noticeTime = data.noticeAt
+    ? new Date(data.noticeAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })
+    : null;
+  const body = eventTime
+    ? `Event: ${eventTime}${noticeTime ? `\nNotice: ${noticeTime}` : ''}`
+    : data.body;
   const options = {
-    body: data.body,
+    body,
     icon: '/favicon.svg',
     badge: '/favicon.svg',
     data: {

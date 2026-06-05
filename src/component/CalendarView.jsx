@@ -226,7 +226,10 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
                           {entry.feeling || 'unknown'}
                         </span>
                         <span className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-gray-600">
-                          Notice {entry.noticeAt ? new Date(entry.noticeAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'at event time'}
+                          Event {getEntryDate(entry).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                        <span className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-gray-600">
+                          Notice {entry.noticeAt ? new Date(entry.noticeAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'event time'}
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-2">

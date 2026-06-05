@@ -16,6 +16,12 @@ function AppContent() {
 
   async function registerPush() {
     try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        console.log('Push notifications not allowed');
+        return;
+      }
+
       const registration = await navigator.serviceWorker.register('/sw.js');
       console.log('SW Registered');
 
@@ -29,7 +35,10 @@ function AppContent() {
         });
       }
 
-      await axios.put('api/v2/users/subscribe', { subscription });
+      await axios.put('api/v2/users/subscribe', {
+        subscription,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      });
       console.log('Push Subscribed');
     } catch (err) {
       console.error('Push registration failed:', err);

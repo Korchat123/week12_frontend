@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useDiary } from '../context/DiaryContext';
 import CalendarView from '../component/CalendarView';
 import MoodPercentageBar from '../component/MoodPercentageBar';
+import { formatLocalDateTime, getUserTimeZone, localDateTimeToIso } from '../utils/dateTime';
 
 const sampleMoodNotes = [
   { _id: 'sample-happy', feeling: 'happy' },
@@ -44,19 +45,6 @@ const weekdayOptions = [
 const dayPresets = {
   weekdays: [1, 2, 3, 4, 5],
   weekend: [0, 6]
-};
-
-const formatLocalDate = (date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-const formatLocalDateTime = (date) => {
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${formatLocalDate(date)}T${hours}:${minutes}`;
 };
 
 const getReminderGroupKey = (reminder) => {
@@ -186,9 +174,10 @@ export default function Home() {
         reminderKind: 'daily',
         repeatFrequency: eventForm.repeatFrequency,
         repeatDays: eventForm.repeatDays,
-        reminderDate: formatLocalDateTime(nextReminderDate),
+        reminderDate: localDateTimeToIso(formatLocalDateTime(nextReminderDate)),
         noticeEnabled: eventForm.noticeEnabled,
-        noticeAt: formatLocalDateTime(nextReminderDate)
+        noticeAt: localDateTimeToIso(formatLocalDateTime(nextReminderDate)),
+        userTimeZone: getUserTimeZone()
       });
 
       setEventForm(current => ({
@@ -254,9 +243,12 @@ export default function Home() {
               </p>
             )}
             <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-2">
-              <span className="text-sm font-semibold text-gray-700">
-                {new Date(r.reminderDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
+              <div className="text-sm font-semibold text-gray-700">
+                <span>Event {new Date(r.reminderDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <span className="ml-3 text-gray-500">
+                  Notice {r.noticeAt ? new Date(r.noticeAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'event time'}
+                </span>
+              </div>
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"

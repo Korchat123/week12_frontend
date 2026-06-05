@@ -140,14 +140,40 @@ export default function DiaryDashboard() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="font-semibold text-gray-700">Date & Time (Reminder)</label>
+            <label className="font-semibold text-gray-700">Event Date & Time</label>
             <input
               type="datetime-local"
               value={formData.reminderDate}
-              onChange={e => setFormData({...formData, reminderDate: e.target.value})}
+              onChange={e => setFormData({
+                ...formData,
+                reminderDate: e.target.value,
+                noticeAt: formData.noticeAt || e.target.value
+              })}
               className={formInputClass}
             />
           </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-gray-700">Notice Date & Time</label>
+            <input
+              type="datetime-local"
+              value={formData.noticeAt}
+              onChange={e => setFormData({...formData, noticeAt: e.target.value})}
+              disabled={!formData.reminderDate}
+              className={formInputClass}
+            />
+          </div>
+
+          <label className="flex items-center gap-3 font-semibold text-gray-700">
+            <input
+              type="checkbox"
+              checked={formData.noticeEnabled}
+              onChange={e => setFormData({...formData, noticeEnabled: e.target.checked})}
+              disabled={!formData.reminderDate}
+              className="h-4 w-4"
+            />
+            Notice on
+          </label>
 
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-gray-700">Topic</label>

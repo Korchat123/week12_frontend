@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
+import { formatLocalDateTime, getUserTimeZone, localDateTimeToIso } from '../utils/dateTime';
 
 const DiaryContext = createContext();
 
@@ -12,7 +13,9 @@ export const DiaryProvider = ({ children }) => {
     topic: '',
     detail: '',
     feeling: 'unknown',
-    result: ''
+    result: '',
+    noticeAt: '',
+    noticeEnabled: true
   });
 
   // Search and Filter State
@@ -37,7 +40,15 @@ export const DiaryProvider = ({ children }) => {
   }, []);
 
   const resetForm = () => {
-    setFormData({ reminderDate: '', topic: '', detail: '', feeling: 'unknown', result: '' });
+    setFormData({
+      reminderDate: '',
+      topic: '',
+      detail: '',
+      feeling: 'unknown',
+      result: '',
+      noticeAt: '',
+      noticeEnabled: true
+    });
     setEditingId(null);
   };
 
@@ -62,10 +73,17 @@ export const DiaryProvider = ({ children }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const reminderDate = localDateTimeToIso(formData.reminderDate);
+      const noticeAt = localDateTimeToIso(formData.noticeAt) || reminderDate;
       const payload = {
         ...formData,
-        type: formData.reminderDate ? 'reminder' : 'diary',
-        reminderKind: formData.reminderDate ? 'event' : undefined
+        reminderDate: reminderDate || null,
+        noticeAt: reminderDate ? noticeAt : null,
+        noticeEnabled: reminderDate ? formData.noticeEnabled : false,
+        userTimeZone: getUserTimeZone(),
+        type: reminderDate ? 'reminder' : 'diary',
+        reminderKind: reminderDate ? 'event' : undefined,
+        noticeSentAt: null
       };
 
       if (editingId) {
@@ -92,11 +110,13 @@ export const DiaryProvider = ({ children }) => {
   const handleEditClick = (note) => {
     setEditingId(note._id);
     setFormData({
-      reminderDate: note.reminderDate ? note.reminderDate.substring(0, 16) : '',
+      reminderDate: formatLocalDateTime(note.reminderDate),
       topic: note.topic,
       detail: note.detail,
       feeling: note.feeling,
-      result: note.result || ''
+      result: note.result || '',
+      noticeAt: formatLocalDateTime(note.noticeAt || note.reminderDate),
+      noticeEnabled: note.noticeEnabled !== false
     });
   };
 
