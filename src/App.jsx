@@ -10,18 +10,11 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import axios from 'axios';
-import './App.css';
 
 function AppContent() {
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
-      registerPush();
-    }
-  }, [user]);
-
-  const registerPush = async () => {
+  async function registerPush() {
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');
       console.log('SW Registered');
@@ -36,15 +29,21 @@ function AppContent() {
         });
       }
 
-      await axios.put('v2/users/subscribe', { subscription });
+      await axios.put('api/v2/users/subscribe', { subscription });
       console.log('Push Subscribed');
     } catch (err) {
       console.error('Push registration failed:', err);
     }
-  };
+  }
+
+  useEffect(() => {
+    if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
+      registerPush();
+    }
+  }, [user]);
 
   return (
-    <div className="container">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-8">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

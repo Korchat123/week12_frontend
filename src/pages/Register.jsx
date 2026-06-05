@@ -34,16 +34,17 @@ export default function Register() {
   };
 
   return (
-    <div className="register-container">
-      <form onSubmit={handleSubmit} className="auth-form">
-        <h2>Register</h2>
-        {error && <p className="error">{error}</p>}
+    <div>
+      <form onSubmit={handleSubmit} className="mx-auto mt-8 max-w-md rounded-lg bg-white p-8 shadow">
+        <h2 className="mb-6 mt-0 text-center text-2xl font-bold">Register</h2>
+        {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
         <input
           type="text"
           placeholder="Full Name"
           value={formData.name}
           onChange={(e) => setFormData({...formData, name: e.target.value})}      
           required
+          className="mb-4 w-full rounded-md border border-gray-200 p-3"
         />
         <input
           type="text"
@@ -51,6 +52,7 @@ export default function Register() {
           value={formData.username}
           onChange={(e) => setFormData({...formData, username: e.target.value})}  
           required
+          className="mb-4 w-full rounded-md border border-gray-200 p-3"
         />
         <input
           type="email"
@@ -58,6 +60,7 @@ export default function Register() {
           value={formData.email}
           onChange={(e) => setFormData({...formData, email: e.target.value})}     
           required
+          className="mb-4 w-full rounded-md border border-gray-200 p-3"
         />
         <input
           type="password"
@@ -65,10 +68,11 @@ export default function Register() {
           value={formData.password}
           onChange={(e) => setFormData({...formData, password: e.target.value})}  
           required
+          className="mb-4 w-full rounded-md border border-gray-200 p-3"
         />
-        <button type="submit">Register</button>
+        <button type="submit" className="w-full cursor-pointer rounded-md border-0 bg-indigo-600 p-3 font-semibold text-white hover:bg-indigo-700">Register</button>
 
-        <div className="google-login-wrapper" style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+        <div className="mt-4 flex justify-center">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={() => setError('Google Sign-up failed')}

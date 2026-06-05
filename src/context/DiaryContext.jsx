@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
@@ -19,6 +20,7 @@ export const DiaryProvider = ({ children }) => {
   const [filterDate, setFilterDate] = useState('');
   const [filterFeeling, setFilterFeeling] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // all, upcoming, past
+  const [entryTypeFilter, setEntryTypeFilter] = useState('event'); // all, diary, event
 
   const fetchNotes = async () => {
     try {
@@ -30,6 +32,7 @@ export const DiaryProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchNotes();
   }, []);
 
@@ -38,16 +41,39 @@ export const DiaryProvider = ({ children }) => {
     setEditingId(null);
   };
 
+  const createNote = async (payload) => {
+    const response = await axios.post('api/v2/notes', payload);
+    await fetchNotes();
+    return response.data.data;
+  };
+
+  const updateNote = async (id, payload) => {
+    const response = await axios.put(`api/v2/notes/${id}`, payload);
+    await fetchNotes();
+    return response.data.data;
+  };
+
+  const deleteNote = async (id) => {
+    await axios.delete(`api/v2/notes/${id}`);
+    if (editingId === id) resetForm();
+    await fetchNotes();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        type: formData.reminderDate ? 'reminder' : 'diary',
+        reminderKind: formData.reminderDate ? 'event' : undefined
+      };
+
       if (editingId) {
-        await axios.put(`api/v2/notes/${editingId}`, formData);
+        await updateNote(editingId, payload);
       } else {
-        await axios.post('api/v2/notes', formData);
+        await createNote(payload);
       }
       resetForm();
-      fetchNotes();
     } catch (error) {
       console.error('Failed to save note', error);
     }
@@ -57,9 +83,7 @@ export const DiaryProvider = ({ children }) => {
     if (e) e.stopPropagation(); // Prevent loading into form when deleting
     if (!window.confirm('Delete this entry?')) return;
     try {
-      await axios.delete(`api/v2/notes/${id}`);
-      if (editingId === id) resetForm();
-      fetchNotes();
+      await deleteNote(id);
     } catch (error) {
       console.error('Delete failed', error);
     }
@@ -85,6 +109,12 @@ export const DiaryProvider = ({ children }) => {
       const matchesSearch = note.topic.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesFeeling = filterFeeling ? note.feeling === filterFeeling : true;
       const matchesDate = filterDate ? date.toLocaleDateString() === new Date(filterDate).toLocaleDateString() : true;
+      const isEventEntry = note.type === 'reminder' && note.reminderKind !== 'daily';
+      const matchesEntryType = entryTypeFilter === 'all'
+        ? true
+        : entryTypeFilter === 'event'
+          ? isEventEntry
+          : !isEventEntry;
       
       let matchesStatus = true;
       if (statusFilter === 'upcoming') {
@@ -93,9 +123,9 @@ export const DiaryProvider = ({ children }) => {
         matchesStatus = !note.reminderDate || new Date(note.reminderDate) <= now;
       }
 
-      return matchesSearch && matchesFeeling && matchesDate && matchesStatus;
+      return matchesSearch && matchesFeeling && matchesDate && matchesStatus && matchesEntryType;
     });
-  }, [notes, searchQuery, filterDate, filterFeeling, statusFilter]);
+  }, [notes, searchQuery, filterDate, filterFeeling, statusFilter, entryTypeFilter]);
 
   const getNoteStatusClass = (note) => {
     const now = new Date();
@@ -119,7 +149,12 @@ export const DiaryProvider = ({ children }) => {
     setFilterFeeling,
     statusFilter,
     setStatusFilter,
+    entryTypeFilter,
+    setEntryTypeFilter,
     fetchNotes,
+    createNote,
+    updateNote,
+    deleteNote,
     handleSubmit,
     resetForm,
     handleDelete,

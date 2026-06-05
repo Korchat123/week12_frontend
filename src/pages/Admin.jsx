@@ -15,6 +15,7 @@ export default function Admin() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUsers();
   }, []);
 
@@ -41,61 +42,67 @@ export default function Admin() {
   };
 
   return (
-    <div className="admin-container">
-      <h1>Admin User Management</h1>
-      <table className="admin-table">
+    <div>
+      <h1 className="mb-6 text-3xl font-bold">Admin User Management</h1>
+      <div className="overflow-x-auto rounded-lg bg-white shadow">
+      <table className="w-full border-collapse">
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
+          <tr className="bg-gray-100">
+            <th className="border-b border-gray-200 p-4 text-left font-semibold">Name</th>
+            <th className="border-b border-gray-200 p-4 text-left font-semibold">Username</th>
+            <th className="border-b border-gray-200 p-4 text-left font-semibold">Email</th>
+            <th className="border-b border-gray-200 p-4 text-left font-semibold">Role</th>
+            <th className="border-b border-gray-200 p-4 text-left font-semibold">Actions</th>
           </tr>
         </thead>
         <tbody>
           {users.map(u => (
             <tr key={u._id}>
-              <td>{u.name || '-'}</td>
-              <td>{u.username}</td>
-              <td>{u.email}</td>
-              <td>{u.role}</td>
-              <td>
-                <button onClick={() => setEditingUser(u)}>Edit</button>
-                <button onClick={() => handleDelete(u._id)}>Delete</button>
+              <td className="border-b border-gray-200 p-4">{u.name || '-'}</td>
+              <td className="border-b border-gray-200 p-4">{u.username}</td>
+              <td className="border-b border-gray-200 p-4">{u.email}</td>
+              <td className="border-b border-gray-200 p-4">{u.role}</td>
+              <td className="border-b border-gray-200 p-4">
+                <button onClick={() => setEditingUser(u)} className="mr-2 cursor-pointer rounded border border-gray-200 px-4 py-2 hover:bg-gray-50">Edit</button>
+                <button onClick={() => handleDelete(u._id)} className="cursor-pointer rounded border border-gray-200 px-4 py-2 text-red-600 hover:bg-red-50">Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      </div>
 
       {editingUser && (
-        <div className="edit-modal">
-          <form onSubmit={handleUpdate}>
-            <h3>Edit User</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <form onSubmit={handleUpdate} className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-8">
+            <h3 className="text-xl font-bold">Edit User</h3>
             <input
               placeholder="Name"
               value={editingUser.name || ''}
               onChange={e => setEditingUser({...editingUser, name: e.target.value})}
+              className="rounded-md border border-gray-200 p-3"
             />
             <input
               placeholder="Username"
               value={editingUser.username}
               onChange={e => setEditingUser({...editingUser, username: e.target.value})}
+              className="rounded-md border border-gray-200 p-3"
             />
             <input
               value={editingUser.email}
               onChange={e => setEditingUser({...editingUser, email: e.target.value})}
+              className="rounded-md border border-gray-200 p-3"
             />
             <select
               value={editingUser.role}
               onChange={e => setEditingUser({...editingUser, role: e.target.value})}
+              className="rounded-md border border-gray-200 p-3"
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
-            <button type="submit">Save</button>
-            <button type="button" onClick={() => setEditingUser(null)}>Cancel</button>
+            <button type="submit" className="cursor-pointer rounded-md border-0 bg-indigo-600 p-3 font-semibold text-white hover:bg-indigo-700">Save</button>
+            <button type="button" onClick={() => setEditingUser(null)} className="cursor-pointer rounded-md border border-gray-200 p-3 hover:bg-gray-50">Cancel</button>
           </form>
         </div>
       )}
