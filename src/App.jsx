@@ -7,16 +7,32 @@ import ProtectedRoute from './component/ProtectedRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ConfirmRegistration from './pages/ConfirmRegistration';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import axios from 'axios';
+
+const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || "BCrZjjEpR_BhhrfkOwjFNZbWnQTQ_qxVvkIeNXpPEoy0ZMw-fgzGnIQbOfBnB24sFUNp7027mvocgoapM1Y2hzI";
 
 function AppContent() {
   const { user } = useAuth();
 
   async function registerPush() {
     try {
-      const permission = await Notification.requestPermission();
+      if (!('Notification' in window)) {
+        console.warn('Push notifications are not supported by this browser');
+        return;
+      }
+
+      if (!VAPID_PUBLIC_KEY) {
+        console.warn('Missing VAPID public key for push notifications');
+        return;
+      }
+
+      const permission = Notification.permission === 'granted'
+        ? 'granted'
+        : await Notification.requestPermission();
+
       if (permission !== 'granted') {
         console.log('Push notifications not allowed');
         return;
@@ -26,12 +42,17 @@ function AppContent() {
       console.log('SW Registered');
 
       let subscription = await registration.pushManager.getSubscription();
+      const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+
+      if (subscription && !isSubscriptionUsingKey(subscription, applicationServerKey)) {
+        await subscription.unsubscribe();
+        subscription = null;
+      }
 
       if (!subscription) {
-        const publicVapidKey = "BCrZjjEpR_BhhrfkOwjFNZbWnQTQ_qxVvkIeNXpPEoy0ZMw-fgzGnIQbOfBnB24sFUNp7027mvocgoapM1Y2hzI"; // Replace with your real key
         subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+          applicationServerKey
         });
       }
 
@@ -57,6 +78,7 @@ function AppContent() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/confirm-registration" element={<ConfirmRegistration />} />
         <Route
           path="/dashboard"
           element={
@@ -78,6 +100,21 @@ function AppContent() {
       </Routes>
     </div>
   );
+}
+
+function arrayBufferToBase64Url(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i += 1) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function isSubscriptionUsingKey(subscription, applicationServerKey) {
+  const existingKey = subscription.options?.applicationServerKey;
+  if (!existingKey) return true;
+  return arrayBufferToBase64Url(existingKey) === arrayBufferToBase64Url(applicationServerKey);
 }
 
 function urlBase64ToUint8Array(base64String) {

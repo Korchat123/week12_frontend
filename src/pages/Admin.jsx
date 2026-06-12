@@ -3,6 +3,7 @@ import axios from 'axios';
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
+  const [pendingRegistrations, setPendingRegistrations] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
 
   const fetchUsers = async () => {
@@ -14,9 +15,19 @@ export default function Admin() {
     }
   };
 
+  const fetchPendingRegistrations = async () => {
+    try {
+      const response = await axios.get('api/v2/users/pending-registrations');
+      setPendingRegistrations(response.data.data);
+    } catch (error) {
+      console.error('Failed to fetch pending registrations', error);
+    }
+  };
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUsers();
+    fetchPendingRegistrations();
   }, []);
 
   const handleDelete = async (id) => {
@@ -26,6 +37,17 @@ export default function Admin() {
         fetchUsers();
       } catch (error) {
         console.error('Delete failed', error);
+      }
+    }
+  };
+
+  const handleDropPending = async (id) => {
+    if (window.confirm('Drop this registration request?')) {
+      try {
+        await axios.delete(`api/v2/users/pending-registrations/${id}`);
+        fetchPendingRegistrations();
+      } catch (error) {
+        console.error('Drop registration request failed', error);
       }
     }
   };
@@ -44,6 +66,53 @@ export default function Admin() {
   return (
     <div>
       <h1 className="mb-6 text-3xl font-bold">Admin User Management</h1>
+
+      <section className="mb-8">
+        <h2 className="mb-4 text-2xl font-bold">Pending Registrations</h2>
+        <div className="overflow-x-auto rounded-lg bg-white shadow">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border-b border-gray-200 p-4 text-left font-semibold">Name</th>
+                <th className="border-b border-gray-200 p-4 text-left font-semibold">Username</th>
+                <th className="border-b border-gray-200 p-4 text-left font-semibold">Email</th>
+                <th className="border-b border-gray-200 p-4 text-left font-semibold">Expires</th>
+                <th className="border-b border-gray-200 p-4 text-left font-semibold">Status</th>
+                <th className="border-b border-gray-200 p-4 text-left font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pendingRegistrations.map(request => (
+                <tr key={request._id}>
+                  <td className="border-b border-gray-200 p-4">{request.name || '-'}</td>
+                  <td className="border-b border-gray-200 p-4">{request.username}</td>
+                  <td className="border-b border-gray-200 p-4">{request.email}</td>
+                  <td className="border-b border-gray-200 p-4">{new Date(request.expiresAt).toLocaleString()}</td>
+                  <td className="border-b border-gray-200 p-4">
+                    <span className={request.expired ? 'font-semibold text-red-600' : 'font-semibold text-green-700'}>
+                      {request.expired ? 'Expired' : 'Waiting'}
+                    </span>
+                  </td>
+                  <td className="border-b border-gray-200 p-4">
+                    <button
+                      onClick={() => handleDropPending(request._id)}
+                      className="cursor-pointer rounded border border-gray-200 px-4 py-2 text-red-600 hover:bg-red-50"
+                    >
+                      Drop
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {pendingRegistrations.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="p-4 text-center text-gray-500">No pending registrations.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <div className="overflow-x-auto rounded-lg bg-white shadow">
       <table className="w-full border-collapse">
         <thead>

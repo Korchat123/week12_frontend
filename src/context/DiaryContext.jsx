@@ -64,6 +64,12 @@ export const DiaryProvider = ({ children }) => {
     return response.data.data;
   };
 
+  const runReminderAction = async (id, action) => {
+    const response = await axios.post(`api/v2/notes/${id}/reminder-action`, { action });
+    await fetchNotes();
+    return response.data.data;
+  };
+
   const deleteNote = async (id) => {
     await axios.delete(`api/v2/notes/${id}`);
     if (editingId === id) resetForm();
@@ -174,6 +180,7 @@ export const DiaryProvider = ({ children }) => {
     fetchNotes,
     createNote,
     updateNote,
+    runReminderAction,
     deleteNote,
     handleSubmit,
     resetForm,

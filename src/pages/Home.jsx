@@ -85,7 +85,7 @@ const getReminderDetail = (detail = '') => detail.replace('[Daily reminder]', ''
 export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { notes, createNote, updateNote, deleteNote, handleEditClick } = useDiary();
+  const { notes, createNote, updateNote, runReminderAction, deleteNote, handleEditClick } = useDiary();
   const [eventForm, setEventForm] = useState({
     topic: '',
     detail: '',
@@ -201,6 +201,10 @@ export default function Home() {
     });
   };
 
+  const handleReminderAction = async (reminder, action) => {
+    await runReminderAction(reminder._id, action);
+  };
+
   const handleDeleteReminder = async (reminder) => {
     if (!window.confirm(`Delete "${reminder.topic}"?`)) return;
     await deleteNote(reminder._id);
@@ -263,6 +267,28 @@ export default function Home() {
                   }`}
                 >
                   Notice {r.noticeEnabled !== false ? 'On' : 'Off'}
+                </button>
+                {r.reminderKind === 'daily' && (
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleReminderAction(r, 'pause-once');
+                    }}
+                    className="cursor-pointer rounded-full border border-amber-200 bg-white px-3 py-1 text-xs font-bold text-amber-700 hover:bg-amber-50"
+                  >
+                    Temporary
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleReminderAction(r, 'stop-always');
+                  }}
+                  className="cursor-pointer rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-bold text-gray-600 hover:bg-gray-100"
+                >
+                  Always off
                 </button>
                 <button
                   type="button"

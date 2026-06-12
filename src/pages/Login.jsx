@@ -7,25 +7,44 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await login(email, password);
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setError(result.message);
+    if (isSubmitting) return;
+
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const result = await login(email, password);
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.message);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
-    const result = await googleLogin(credentialResponse.credential);
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setError(result.message);
+    if (isSubmitting) return;
+
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const result = await googleLogin(credentialResponse.credential);
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.message);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -39,6 +58,7 @@ export default function Login() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={isSubmitting}
           required
           className="mb-4 w-full rounded-md border border-gray-200 p-3"
         />
@@ -47,12 +67,19 @@ export default function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={isSubmitting}
           required
           className="mb-4 w-full rounded-md border border-gray-200 p-3"
         />
-        <button type="submit" className="w-full cursor-pointer rounded-md border-0 bg-indigo-600 p-3 font-semibold text-white hover:bg-indigo-700">Login</button>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full cursor-pointer rounded-md border-0 bg-indigo-600 p-3 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+        >
+          {isSubmitting ? 'Logging in...' : 'Login'}
+        </button>
 
-        <div className="mt-4 flex justify-center">
+        <div className={`mt-4 flex justify-center ${isSubmitting ? 'pointer-events-none opacity-60' : ''}`}>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={() => setError('Google Login failed')}

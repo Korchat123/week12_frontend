@@ -39,6 +39,10 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data);
         return { success: true };
       }
+      return {
+        success: false,
+        message: response.data?.error || response.data?.message || 'Login failed'
+      };
     } catch (error) {
       return {
         success: false,
@@ -56,6 +60,10 @@ export const AuthProvider = ({ children }) => {
         await checkAuth();
         return { success: true };
       }
+      return {
+        success: false,
+        message: response.data?.error || response.data?.message || 'Google Login failed'
+      };
     } catch (error) {
       return {
         success: false,
@@ -77,8 +85,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post('api/v2/users/hashpass/', formData);
       if (response.data.success) {
-        return { success: true };
+        return { success: true, message: response.data.message };
       }
+      return {
+        success: false,
+        message: response.data?.error || response.data?.message || 'Registration failed'
+      };
     } catch (error) {
       return {
         success: false,
