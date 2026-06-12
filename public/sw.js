@@ -17,8 +17,8 @@ self.addEventListener('push', (event) => {
     requireInteraction: true,
     actions: [
       { action: 'notice', title: 'Notice' },
-      { action: 'pause-once', title: 'Temporary' },
-      { action: 'stop-always', title: 'Always off' }
+      { action: 'pause-once', title: 'Skip once' },
+      { action: 'stop-always', title: 'Turn off' }
     ],
     data: {
       url: data.url || '/',

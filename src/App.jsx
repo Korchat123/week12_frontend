@@ -73,7 +73,7 @@ function AppContent() {
   }, [user]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-8">
+    <main className="mx-auto max-w-6xl px-4 py-6 sm:px-8">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -98,7 +98,7 @@ function AppContent() {
         {/* Catch-all route to redirect unmatched paths to Home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </div>
+    </main>
   );
 }
 

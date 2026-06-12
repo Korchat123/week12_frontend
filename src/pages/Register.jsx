@@ -47,10 +47,11 @@ export default function Register() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="mx-auto mt-8 max-w-md rounded-lg bg-white p-8 shadow">
-        <h2 className="mb-6 mt-0 text-center text-2xl font-bold">Register</h2>
-        {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
-        {message && <p className="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700">{message}</p>}
+      <form onSubmit={handleSubmit} className="mx-auto mt-8 max-w-md rounded-xl border border-[#e6ddd4] bg-white/90 p-8 shadow-[var(--shadow-soft)]">
+        <h2 className="mb-2 mt-0 text-center text-2xl font-bold text-[#24312f]">Create Your Space</h2>
+        <p className="mb-6 text-center text-sm text-[#66736f]">Keep notes, mood check-ins, and gentle reminders together.</p>
+        {error && <p className="mb-4 rounded-lg bg-[#fff1ef] p-3 text-sm text-[#b05a5a]">{error}</p>}
+        {message && <p className="mb-4 rounded-lg bg-[#e4f2ee] p-3 text-sm text-[#25685f]">{message}</p>}
         <input
           type="text"
           placeholder="Full Name"
@@ -58,7 +59,7 @@ export default function Register() {
           onChange={(e) => setFormData({...formData, name: e.target.value})}      
           disabled={isSubmitting}
           required
-          className="mb-4 w-full rounded-md border border-gray-200 p-3"
+          className="mb-4 w-full rounded-lg border border-[#d9cec4] bg-white/90 p-3 text-[#24312f] focus:border-[#2f7d73]"
         />
         <input
           type="text"
@@ -67,7 +68,7 @@ export default function Register() {
           onChange={(e) => setFormData({...formData, username: e.target.value})}  
           disabled={isSubmitting}
           required
-          className="mb-4 w-full rounded-md border border-gray-200 p-3"
+          className="mb-4 w-full rounded-lg border border-[#d9cec4] bg-white/90 p-3 text-[#24312f] focus:border-[#2f7d73]"
         />
         <input
           type="email"
@@ -76,7 +77,7 @@ export default function Register() {
           onChange={(e) => setFormData({...formData, email: e.target.value})}     
           disabled={isSubmitting}
           required
-          className="mb-4 w-full rounded-md border border-gray-200 p-3"
+          className="mb-4 w-full rounded-lg border border-[#d9cec4] bg-white/90 p-3 text-[#24312f] focus:border-[#2f7d73]"
         />
         <input
           type="password"
@@ -85,12 +86,12 @@ export default function Register() {
           onChange={(e) => setFormData({...formData, password: e.target.value})}  
           disabled={isSubmitting}
           required
-          className="mb-4 w-full rounded-md border border-gray-200 p-3"
+          className="mb-4 w-full rounded-lg border border-[#d9cec4] bg-white/90 p-3 text-[#24312f] focus:border-[#2f7d73]"
         />
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full cursor-pointer rounded-md border-0 bg-indigo-600 p-3 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+          className="w-full cursor-pointer rounded-lg border-0 bg-[#2f7d73] p-3 font-semibold text-white hover:bg-[#25685f] disabled:cursor-not-allowed disabled:bg-[#9bc8c0]"
         >
           {isSubmitting ? 'Sending link...' : 'Register'}
         </button>

@@ -1,18 +1,18 @@
 
 const moodColors = {
-  happy: '#ffcc00',
-  excited: '#ff9900',
-  neutral: '#cccccc',
-  sad: '#6699ff',
-  angry: '#ff3333'
+  happy: '#F4C95D',
+  excited: '#F59E6B',
+  neutral: '#A7B0B8',
+  sad: '#7DA9D8',
+  angry: '#D98282'
 };
 
 const moodLabels = {
-  happy: 'Happy',
-  excited: 'Excited',
-  neutral: 'Neutral',
-  sad: 'Sad',
-  angry: 'Angry'
+  happy: 'Bright',
+  excited: 'Energized',
+  neutral: 'Steady',
+  sad: 'Low energy',
+  angry: 'Tense'
 };
 
 export default function MoodPercentageBar({ notes = [] }) {
@@ -30,12 +30,12 @@ export default function MoodPercentageBar({ notes = [] }) {
   const moods = Object.keys(moodLabels);
 
   return (
-    <div className="mb-8 rounded-2xl bg-white p-6 shadow">
-      <h3 className="text-xl font-bold">Mood Distribution</h3>
+    <div className="mb-8 rounded-xl border border-[#e6ddd4] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
+      <h3 className="text-xl font-bold text-[#24312f]">Mood Check-In</h3>
       {!hasNotes && (
-        <p className="mt-2 text-sm text-gray-500">No mood entries yet. Add a diary note to start tracking your mood.</p>
+        <p className="mt-2 text-sm text-[#66736f]">No mood entries yet. Add a private note when you want to reflect.</p>
       )}
-      <div className="my-4 flex h-6 w-full overflow-hidden rounded-full bg-gray-100">
+      <div className="my-4 flex h-5 w-full overflow-hidden rounded-full bg-[#f1ebe4]">
         {moods.map(mood => {
           const count = counts[mood] || 0;
           const percentage = (count / total) * 100;
@@ -60,7 +60,7 @@ export default function MoodPercentageBar({ notes = [] }) {
           if (count === 0) return null;
 
           return (
-            <div key={mood} className="flex items-center gap-2 text-sm">
+            <div key={mood} className="flex items-center gap-2 text-sm text-[#53615d]">
               <span className="h-3 w-3 rounded-full" style={{ backgroundColor: moodColors[mood] }}></span>
               <span>{moodLabels[mood]} ({Math.round((count / total) * 100)}%)</span>
             </div>

@@ -15,9 +15,9 @@ const sampleMoodNotes = [
 ];
 
 const proximityClasses = {
-  'prox-red': 'border-red-500 bg-red-50',
-  'prox-yellow': 'border-amber-500 bg-amber-50',
-  'prox-gray': 'border-gray-400 bg-gray-50'
+  'prox-red': 'border-[#d98282] bg-[#fff1ef]',
+  'prox-yellow': 'border-[#d9a441] bg-[#fff7e3]',
+  'prox-gray': 'border-[#9fb1ab] bg-[#f3f7f5]'
 };
 
 const repeatFrequencyOptions = [
@@ -222,7 +222,7 @@ export default function Home() {
           <div
             key={r._id}
             onClick={() => handleReminderClick(r)}
-            className={`flex flex-col gap-2 rounded-2xl border-t-8 p-5 text-inherit shadow-sm transition hover:-translate-y-1 ${getProximityClass(r.reminderDate)}`}
+            className={`flex flex-col gap-2 rounded-xl border border-[#e6ddd4] border-t-4 p-5 text-inherit shadow-sm transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)] ${getProximityClass(r.reminderDate)}`}
             role="button"
             tabIndex={0}
             onKeyDown={(event) => {
@@ -233,24 +233,24 @@ export default function Home() {
             }}
           >
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-bold tracking-wider text-gray-500">{new Date(r.reminderDate).toLocaleDateString()}</span>
+              <span className="text-xs font-bold tracking-wider text-[#66736f]">{new Date(r.reminderDate).toLocaleDateString()}</span>
               {r.reminderKind === 'daily' && (
-                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                <span className="rounded-full bg-[#e4f2ee] px-2 py-0.5 text-xs font-semibold text-[#25685f]">
                   {repeatFrequencyLabels[r.repeatFrequency] || 'Always'}
                 </span>
               )}
             </div>
-            <h4 className="text-lg font-semibold text-gray-900">{r.topic}</h4>
+            <h4 className="text-lg font-semibold text-[#24312f]">{r.topic}</h4>
             {getReminderDetail(r.detail) && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[#66736f]">
                 {getReminderDetail(r.detail).substring(0, 100)}{getReminderDetail(r.detail).length > 100 ? '...' : ''}
               </p>
             )}
             <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-2">
-              <div className="text-sm font-semibold text-gray-700">
+              <div className="text-sm font-semibold text-[#53615d]">
                 <span>Event {new Date(r.reminderDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                <span className="ml-3 text-gray-500">
-                  Notice {r.noticeAt ? new Date(r.noticeAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'event time'}
+                <span className="ml-3 text-[#66736f]">
+                  Reminder {r.noticeAt ? new Date(r.noticeAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'event time'}
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -262,11 +262,11 @@ export default function Home() {
                   }}
                   className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-bold ${
                     r.noticeEnabled !== false
-                      ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
-                      : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-100'
+                      ? 'border-[#b8d8d1] bg-[#e4f2ee] text-[#25685f] hover:bg-[#d7ebe6]'
+                      : 'border-[#d9cec4] bg-white text-[#66736f] hover:bg-[#f8f4ef]'
                   }`}
                 >
-                  Notice {r.noticeEnabled !== false ? 'On' : 'Off'}
+                  Reminder {r.noticeEnabled !== false ? 'On' : 'Off'}
                 </button>
                 {r.reminderKind === 'daily' && (
                   <button
@@ -275,9 +275,9 @@ export default function Home() {
                       event.stopPropagation();
                       handleReminderAction(r, 'pause-once');
                     }}
-                    className="cursor-pointer rounded-full border border-amber-200 bg-white px-3 py-1 text-xs font-bold text-amber-700 hover:bg-amber-50"
+                    className="cursor-pointer rounded-full border border-[#ead9a8] bg-white px-3 py-1 text-xs font-bold text-[#8a6724] hover:bg-[#fff7e3]"
                   >
-                    Temporary
+                    Skip once
                   </button>
                 )}
                 <button
@@ -286,9 +286,9 @@ export default function Home() {
                     event.stopPropagation();
                     handleReminderAction(r, 'stop-always');
                   }}
-                  className="cursor-pointer rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-bold text-gray-600 hover:bg-gray-100"
+                  className="cursor-pointer rounded-full border border-[#d9cec4] bg-white px-3 py-1 text-xs font-bold text-[#66736f] hover:bg-[#f8f4ef]"
                 >
-                  Always off
+                  Turn off
                 </button>
                 <button
                   type="button"
@@ -296,7 +296,7 @@ export default function Home() {
                     event.stopPropagation();
                     handleDeleteReminder(r);
                   }}
-                  className="cursor-pointer rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-bold text-red-600 hover:bg-red-50"
+                  className="cursor-pointer rounded-full border border-[#efcfca] bg-white px-3 py-1 text-xs font-bold text-[#b05a5a] hover:bg-[#fff1ef]"
                 >
                   Delete
                 </button>
@@ -306,37 +306,38 @@ export default function Home() {
         ))}
       </div>
     ) : (
-      <div className="rounded-lg bg-gray-50 p-4">
-        <p>{emptyMessage}</p>
+      <div className="rounded-lg border border-[#e6ddd4] bg-[#f8f4ef] p-4">
+        <p className="text-sm text-[#66736f]">{emptyMessage}</p>
       </div>
     )
   );
 
   const dailyReminderForm = (
-    <section className="rounded-2xl bg-white p-6 shadow">
-      <h3 className="mb-4 text-2xl font-bold">Create Daily Reminder</h3>
+    <section className="rounded-xl border border-[#e6ddd4] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
+      <h3 className="mb-2 text-2xl font-bold text-[#24312f]">Create Gentle Reminder</h3>
+      <p className="mb-4 text-sm text-[#66736f]">Choose a time and rhythm that supports your day.</p>
       <form onSubmit={handleCreateEvent} className="flex flex-col gap-4">
         <input
           value={eventForm.topic}
           onChange={(event) => handleEventFormChange('topic', event.target.value)}
           placeholder="Reminder title"
           required
-          className="rounded-lg border border-gray-300 p-3"
+          className="rounded-lg border border-[#d9cec4] bg-white/90 p-3 text-[#24312f] focus:border-[#2f7d73]"
         />
 
         <textarea
           value={eventForm.detail}
           onChange={(event) => handleEventFormChange('detail', event.target.value)}
-          placeholder="Reminder detail (optional)"
-          className="min-h-24 resize-y rounded-lg border border-gray-300 p-3"
+          placeholder="Notes (optional)"
+          className="min-h-24 resize-y rounded-lg border border-[#d9cec4] bg-white/90 p-3 text-[#24312f] focus:border-[#2f7d73]"
         />
 
-        <div className="rounded-lg border border-gray-200 p-3">
+        <div className="rounded-lg border border-[#e6ddd4] bg-[#fffdf8] p-3">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <span className="text-sm font-semibold text-gray-700">Days</span>
+            <span className="text-sm font-semibold text-[#53615d]">Days</span>
             <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={() => handleEventFormChange('repeatDays', dayPresets.weekdays)} className="cursor-pointer rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold hover:bg-gray-50">Weekdays</button>
-              <button type="button" onClick={() => handleEventFormChange('repeatDays', dayPresets.weekend)} className="cursor-pointer rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold hover:bg-gray-50">Weekend</button>
+              <button type="button" onClick={() => handleEventFormChange('repeatDays', dayPresets.weekdays)} className="cursor-pointer rounded-full border border-[#d9cec4] bg-white px-3 py-1 text-xs font-semibold text-[#53615d] hover:bg-[#f8f4ef]">Weekdays</button>
+              <button type="button" onClick={() => handleEventFormChange('repeatDays', dayPresets.weekend)} className="cursor-pointer rounded-full border border-[#d9cec4] bg-white px-3 py-1 text-xs font-semibold text-[#53615d] hover:bg-[#f8f4ef]">Weekend</button>
             </div>
           </div>
           <div className="grid grid-cols-7 gap-2">
@@ -350,8 +351,8 @@ export default function Home() {
                   onClick={() => toggleRepeatDay(day.value)}
                   className={`cursor-pointer rounded-lg border px-2 py-2 text-xs font-bold ${
                     isSelected
-                      ? 'border-blue-600 bg-blue-600 text-white'
-                      : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                      ? 'border-[#2f7d73] bg-[#2f7d73] text-white'
+                      : 'border-[#d9cec4] bg-white text-[#66736f] hover:bg-[#f8f4ef]'
                   }`}
                 >
                   {day.label}
@@ -362,56 +363,56 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-sm font-semibold text-gray-700">
+          <label className="flex flex-col gap-1 text-sm font-semibold text-[#53615d]">
             Repeat
             <select
               value={eventForm.repeatFrequency}
               onChange={(event) => handleEventFormChange('repeatFrequency', event.target.value)}
-              className="rounded-lg border border-gray-300 p-3 font-normal"
+              className="rounded-lg border border-[#d9cec4] bg-white/90 p-3 font-normal text-[#24312f] focus:border-[#2f7d73]"
             >
               {repeatFrequencyOptions.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-1 text-sm font-semibold text-gray-700">
-            Notice time
+          <label className="flex flex-col gap-1 text-sm font-semibold text-[#53615d]">
+            Reminder time
             <input
               type="time"
               value={eventForm.noticeTime}
               onChange={(event) => handleEventFormChange('noticeTime', event.target.value)}
-              className="rounded-lg border border-gray-300 p-3 font-normal"
+              className="rounded-lg border border-[#d9cec4] bg-white/90 p-3 font-normal text-[#24312f] focus:border-[#2f7d73]"
             />
           </label>
         </div>
 
-        <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
+        <label className="flex items-center gap-3 text-sm font-semibold text-[#53615d]">
           <input
             type="checkbox"
             checked={eventForm.noticeEnabled}
             onChange={(event) => handleEventFormChange('noticeEnabled', event.target.checked)}
             className="h-4 w-4"
           />
-          Notice on
+          Gentle reminder
         </label>
 
-        <button type="submit" className="cursor-pointer rounded-lg border-0 bg-blue-600 p-3 font-bold text-white hover:bg-blue-700">
-          Create Daily Reminder
+        <button type="submit" className="cursor-pointer rounded-lg border-0 bg-[#2f7d73] p-3 font-bold text-white hover:bg-[#25685f]">
+          Create Reminder
         </button>
-        {eventStatus && <p className="text-sm text-gray-600">{eventStatus}</p>}
+        {eventStatus && <p className="text-sm text-[#66736f]">{eventStatus}</p>}
       </form>
     </section>
   );
 
   if (!user) {
     return (
-      <div className="px-4 py-8 text-center md:px-8 md:py-16">
+      <div className="px-4 py-8 text-center md:px-8 md:py-14">
         <header>
-          <h1 className="mb-4 text-4xl font-bold text-blue-700 md:text-5xl">Plan Your Life, Track Your Mood</h1>
-          <p className="text-gray-600">The smartest full-stack diary app to keep you organized.</p>
+          <h1 className="mb-4 text-4xl font-bold text-[#24312f] md:text-5xl">Mindful Diary</h1>
+          <p className="mx-auto max-w-2xl text-[#66736f]">A private place for mood check-ins, reflections, and gentle reminders.</p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <Link to="/login" className="w-full rounded-lg bg-blue-600 px-8 py-3 font-bold text-white no-underline hover:bg-blue-700 sm:w-auto">Login Now</Link>
-            <Link to="/register" className="w-full rounded-lg border-2 border-blue-600 px-8 py-3 font-bold text-blue-600 no-underline hover:bg-blue-50 sm:w-auto">Get Started</Link>
+            <Link to="/login" className="w-full rounded-lg bg-[#2f7d73] px-8 py-3 font-bold text-white no-underline hover:bg-[#25685f] sm:w-auto">Login</Link>
+            <Link to="/register" className="w-full rounded-lg border border-[#2f7d73] bg-white/70 px-8 py-3 font-bold text-[#2f7d73] no-underline hover:bg-[#e4f2ee] sm:w-auto">Get Started</Link>
           </div>
         </header>
 
@@ -420,22 +421,22 @@ export default function Home() {
         </section>
 
         <section className="mt-12 md:mt-20">
-          <h3 className="text-2xl font-bold">Example Reminders</h3>
+          <h3 className="text-2xl font-bold text-[#24312f]">Example Gentle Reminders</h3>
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="flex flex-col gap-2 rounded-2xl border-t-8 border-red-500 bg-red-50 p-6 text-left shadow transition hover:-translate-y-1">
-              <span className="text-xs font-bold tracking-wider text-gray-500">TOMORROW</span>
-              <h4 className="text-xl font-semibold text-gray-900">Meeting with Client</h4>
-              <p className="text-sm text-gray-600">Prepare the project presentation and reports.</p>
+            <div className="flex flex-col gap-2 rounded-xl border border-[#efcfca] border-t-4 bg-[#fff1ef] p-6 text-left shadow-sm transition hover:-translate-y-0.5">
+              <span className="text-xs font-bold tracking-wider text-[#66736f]">TOMORROW</span>
+              <h4 className="text-xl font-semibold text-[#24312f]">Check In With Yourself</h4>
+              <p className="text-sm text-[#66736f]">Take a moment to write what feels important.</p>
             </div>
-            <div className="flex flex-col gap-2 rounded-2xl border-t-8 border-amber-500 bg-amber-50 p-6 text-left shadow transition hover:-translate-y-1">
-              <span className="text-xs font-bold tracking-wider text-gray-500">IN 3 DAYS</span>
-              <h4 className="text-xl font-semibold text-gray-900">Dentist Appointment</h4>
-              <p className="text-sm text-gray-600">Regular checkup at the clinic.</p>
+            <div className="flex flex-col gap-2 rounded-xl border border-[#ead9a8] border-t-4 bg-[#fff7e3] p-6 text-left shadow-sm transition hover:-translate-y-0.5">
+              <span className="text-xs font-bold tracking-wider text-[#66736f]">IN 3 DAYS</span>
+              <h4 className="text-xl font-semibold text-[#24312f]">Prepare for Appointment</h4>
+              <p className="text-sm text-[#66736f]">Bring notes and questions you want to remember.</p>
             </div>
-            <div className="flex flex-col gap-2 rounded-2xl border-t-8 border-gray-400 bg-gray-50 p-6 text-left shadow transition hover:-translate-y-1">
-              <span className="text-xs font-bold tracking-wider text-gray-500">NEXT WEEK</span>
-              <h4 className="text-xl font-semibold text-gray-900">Buy Groceries</h4>
-              <p className="text-sm text-gray-600">Don't forget the milk and eggs.</p>
+            <div className="flex flex-col gap-2 rounded-xl border border-[#d9cec4] border-t-4 bg-[#f8f4ef] p-6 text-left shadow-sm transition hover:-translate-y-0.5">
+              <span className="text-xs font-bold tracking-wider text-[#66736f]">NEXT WEEK</span>
+              <h4 className="text-xl font-semibold text-[#24312f]">Small Care Task</h4>
+              <p className="text-sm text-[#66736f]">Make space for one practical thing that helps your week.</p>
             </div>
           </div>
         </section>
@@ -446,8 +447,8 @@ export default function Home() {
   return (
     <div>
       <header>
-        <h1 className="text-3xl font-bold">Hello, {user.name || user.username}!</h1>
-        <p className="mt-2 text-gray-500">Your journey at a glance:</p>
+        <h1 className="text-3xl font-bold text-[#24312f]">Hello, {user.name || user.username}</h1>
+        <p className="mt-2 text-[#66736f]">Your private reflections and reminders at a glance.</p>
       </header>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
@@ -464,13 +465,13 @@ export default function Home() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl bg-white p-6 shadow">
-          <h3 className="mb-4 text-2xl font-bold">Repeating Reminders</h3>
+        <section className="rounded-xl border border-[#e6ddd4] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
+          <h3 className="mb-4 text-2xl font-bold text-[#24312f]">Repeating Reminders</h3>
           {renderReminderList(dailyReminders, 'No upcoming repeating reminders.')}
         </section>
 
-        <section className="rounded-2xl bg-white p-6 shadow">
-          <h3 className="mb-4 text-2xl font-bold">Event Reminders</h3>
+        <section className="rounded-xl border border-[#e6ddd4] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
+          <h3 className="mb-4 text-2xl font-bold text-[#24312f]">Event Reminders</h3>
           {renderReminderList(eventReminders, 'No upcoming event reminders.')}
         </section>
       </div>

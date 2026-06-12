@@ -31,12 +31,12 @@ export default function ConfirmRegistration() {
   }, [token]);
 
   return (
-    <div className="mx-auto mt-8 max-w-md rounded-lg bg-white p-8 text-center shadow">
-      <h2 className="mb-4 text-2xl font-bold">Registration Confirmation</h2>
-      <p className={success ? 'text-green-700' : 'text-gray-700'}>{status}</p>
+    <div className="mx-auto mt-8 max-w-md rounded-xl border border-[#e6ddd4] bg-white/90 p-8 text-center shadow-[var(--shadow-soft)]">
+      <h2 className="mb-4 text-2xl font-bold text-[#24312f]">Registration Confirmation</h2>
+      <p className={success ? 'text-[#25685f]' : 'text-[#53615d]'}>{status}</p>
       <Link
         to={success ? '/login' : '/register'}
-        className="mt-6 inline-block rounded-md bg-indigo-600 px-5 py-3 font-semibold text-white no-underline hover:bg-indigo-700"
+        className="mt-6 inline-block rounded-lg bg-[#2f7d73] px-5 py-3 font-semibold text-white no-underline hover:bg-[#25685f]"
       >
         {success ? 'Go to Login' : 'Back to Register'}
       </Link>

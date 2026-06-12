@@ -5,6 +5,15 @@ import { useDiary } from '../context/DiaryContext';
 const getEntryDate = (entry) => new Date(entry.reminderDate || entry.createdAt);
 const isSameDay = (firstDate, secondDate) => firstDate.toDateString() === secondDate.toDateString();
 
+const moodLabels = {
+  happy: 'Bright',
+  excited: 'Energized',
+  neutral: 'Steady',
+  sad: 'Low energy',
+  angry: 'Tense',
+  unknown: 'Not sure yet'
+};
+
 export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
   const navigate = useNavigate();
   const { handleEditClick } = useDiary();
@@ -68,12 +77,12 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
     const isToday = isSameDay(new Date(), dayDate);
     const isSelected = isSameDay(selectedDate, dayDate);
     const dayClass = isSelected
-      ? 'border-2 border-blue-600 bg-blue-600 font-bold text-white'
+      ? 'border-2 border-[#2f7d73] bg-[#2f7d73] font-bold text-white'
       : isToday
-        ? 'border border-blue-500 bg-blue-50 font-bold'
+        ? 'border border-[#2f7d73] bg-[#e4f2ee] font-bold text-[#25685f]'
         : hasNote
-          ? 'bg-yellow-50 hover:bg-yellow-100'
-          : 'bg-gray-50 hover:bg-gray-100';
+          ? 'bg-[#fff7e3] hover:bg-[#ffefc2]'
+          : 'bg-[#f8f4ef] hover:bg-white';
 
     days.push(
       <button
@@ -83,11 +92,11 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
           setSelectedDate(dayDate);
           setIsModalOpen(true);
         }}
-        className={`relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-0 text-sm transition ${dayClass}`}
+        className={`relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border text-sm transition ${dayClass}`}
         aria-label={`Show events for ${dayDate.toLocaleDateString()}`}
       >
         <span>{d}</span>
-        {hasNote && <div className={`absolute bottom-1 h-1 w-1 rounded-full ${isSelected ? 'bg-white' : 'bg-amber-500'}`}></div>}
+        {hasNote && <div className={`absolute bottom-1 h-1 w-1 rounded-full ${isSelected ? 'bg-white' : 'bg-[#d9a441]'}`}></div>}
       </button>
     );
   }
@@ -121,16 +130,16 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
   };
 
   return (
-    <div className="mb-8 rounded-2xl bg-white p-6 shadow">
+    <div className="mb-8 rounded-xl border border-[#e6ddd4] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <button onClick={prevMonth} className="cursor-pointer rounded-lg border-0 bg-gray-100 px-4 py-2 hover:bg-gray-200">&lt;</button>
+        <button onClick={prevMonth} className="cursor-pointer rounded-lg border border-[#d9cec4] bg-white px-4 py-2 text-[#53615d] hover:bg-[#f8f4ef]">&lt;</button>
         <div className="flex flex-wrap items-center justify-center gap-2">
           {isPickerOpen ? (
             <>
               <select
                 value={month}
                 onChange={(event) => handleMonthChange(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-base font-semibold"
+                className="rounded-lg border border-[#d9cec4] bg-white px-3 py-2 text-base font-semibold text-[#24312f]"
                 aria-label="Choose calendar month"
               >
                 {monthNames.map((monthName, index) => (
@@ -140,7 +149,7 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
               <select
                 value={year}
                 onChange={(event) => handleYearChange(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-base font-semibold"
+                className="rounded-lg border border-[#d9cec4] bg-white px-3 py-2 text-base font-semibold text-[#24312f]"
                 aria-label="Choose calendar year"
               >
                 {yearOptions.map(yearOption => (
@@ -152,7 +161,7 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
             <button
               type="button"
               onClick={() => setIsPickerOpen(true)}
-              className="cursor-pointer rounded-lg border-0 bg-transparent px-3 py-2 text-xl font-bold hover:bg-gray-100"
+              className="cursor-pointer rounded-lg border-0 bg-transparent px-3 py-2 text-xl font-bold text-[#24312f] hover:bg-[#f8f4ef]"
               aria-label="Choose calendar month and year"
             >
               {monthNames[month]} {year}
@@ -161,36 +170,36 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
           <button
             type="button"
             onClick={goToToday}
-            className="cursor-pointer rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100"
+            className="cursor-pointer rounded-lg border border-[#b8d8d1] bg-[#e4f2ee] px-3 py-2 text-sm font-semibold text-[#25685f] hover:bg-[#d7ebe6]"
           >
             Today
           </button>
         </div>
-        <button onClick={nextMonth} className="cursor-pointer rounded-lg border-0 bg-gray-100 px-4 py-2 hover:bg-gray-200">&gt;</button>
+        <button onClick={nextMonth} className="cursor-pointer rounded-lg border border-[#d9cec4] bg-white px-4 py-2 text-[#53615d] hover:bg-[#f8f4ef]">&gt;</button>
       </div>
       <div className="grid grid-cols-7 gap-2 text-center">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="pb-2 text-xs font-bold text-gray-500">{day}</div>
+          <div key={day} className="pb-2 text-xs font-bold text-[#66736f]">{day}</div>
         ))}
         {days}
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4" role="dialog" aria-modal="true">
-          <div className="max-h-[85vh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl sm:max-w-lg sm:rounded-2xl sm:p-6">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#24312f]/45 p-0 sm:items-center sm:p-4" role="dialog" aria-modal="true">
+          <div className="max-h-[85vh] w-full overflow-y-auto rounded-t-xl border border-[#e6ddd4] bg-white p-5 shadow-xl sm:max-w-lg sm:rounded-xl sm:p-6">
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
-                <h4 className="text-xl font-bold text-gray-900">
+                <h4 className="text-xl font-bold text-[#24312f]">
                   {selectedDate.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
                 </h4>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-[#66736f]">
                   {selectedDayEntries.length} {selectedDayEntries.length === 1 ? 'event' : 'events'}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="h-9 w-9 shrink-0 cursor-pointer rounded-full border-0 bg-gray-100 text-xl leading-none text-gray-600 hover:bg-gray-200"
+                className="h-9 w-9 shrink-0 cursor-pointer rounded-full border-0 bg-[#f8f4ef] text-xl leading-none text-[#66736f] hover:bg-[#efe7df]"
                 aria-label="Close event popup"
               >
                 x
@@ -202,7 +211,7 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
                 {selectedDayEntries.map(entry => (
                   <div
                     key={entry._id}
-                    className="cursor-pointer rounded-lg border border-gray-200 bg-gray-50 p-4 transition hover:bg-gray-100"
+                    className="cursor-pointer rounded-lg border border-[#e6ddd4] bg-[#fffdf8] p-4 transition hover:bg-[#f8f4ef]"
                     onClick={() => handleEntryClick(entry)}
                     role="button"
                     tabIndex={0}
@@ -214,22 +223,22 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
                     }}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <h5 className="font-semibold text-gray-900">{entry.topic}</h5>
-                      <span className="shrink-0 text-xs font-semibold text-gray-500">
+                      <h5 className="font-semibold text-[#24312f]">{entry.topic}</h5>
+                      <span className="shrink-0 text-xs font-semibold text-[#66736f]">
                         {getEntryDate(entry).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-gray-600">{entry.detail}</p>
+                    <p className="mt-2 text-sm text-[#66736f]">{entry.detail}</p>
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                       <div className="flex flex-wrap gap-2">
-                        <span className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-gray-600">
-                          {entry.feeling || 'unknown'}
+                        <span className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-[#53615d]">
+                          {moodLabels[entry.feeling] || 'Not sure yet'}
                         </span>
-                        <span className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-gray-600">
+                        <span className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-[#53615d]">
                           Event {getEntryDate(entry).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
-                        <span className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-gray-600">
-                          Notice {entry.noticeAt ? new Date(entry.noticeAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'event time'}
+                        <span className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-[#53615d]">
+                          Reminder {entry.noticeAt ? new Date(entry.noticeAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'event time'}
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -241,11 +250,11 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
                           }}
                           className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-bold ${
                             entry.noticeEnabled !== false
-                              ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
-                              : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-100'
+                              ? 'border-[#b8d8d1] bg-[#e4f2ee] text-[#25685f] hover:bg-[#d7ebe6]'
+                              : 'border-[#d9cec4] bg-white text-[#66736f] hover:bg-[#f8f4ef]'
                           }`}
                         >
-                          Notice {entry.noticeEnabled !== false ? 'On' : 'Off'}
+                          Reminder {entry.noticeEnabled !== false ? 'On' : 'Off'}
                         </button>
                         <button
                           type="button"
@@ -253,7 +262,7 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
                             event.stopPropagation();
                             handleDeleteEvent(entry);
                           }}
-                          className="cursor-pointer rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-bold text-red-600 hover:bg-red-50"
+                          className="cursor-pointer rounded-full border border-[#efcfca] bg-white px-3 py-1 text-xs font-bold text-[#b05a5a] hover:bg-[#fff1ef]"
                         >
                           Delete
                         </button>
@@ -263,7 +272,7 @@ export default function CalendarView({ notes, onUpdateEvent, onDeleteEvent }) {
                 ))}
               </div>
             ) : (
-              <p className="rounded-lg bg-gray-50 p-4 text-sm text-gray-500">No events for this day.</p>
+              <p className="rounded-lg border border-[#e6ddd4] bg-[#f8f4ef] p-4 text-sm text-[#66736f]">No events for this day.</p>
             )}
           </div>
         </div>
