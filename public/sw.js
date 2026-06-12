@@ -23,6 +23,7 @@ self.addEventListener('push', (event) => {
     data: {
       url: data.url || '/',
       actionUrl: data.actionUrl,
+      actionToken: data.actionToken,
       noteId: data.noteId
     }
   };
@@ -33,11 +34,11 @@ self.addEventListener('push', (event) => {
 });
 
 self.addEventListener('notificationclick', (event) => {
-  const { actionUrl, url } = event.notification.data || {};
+  const { actionUrl, actionToken, url } = event.notification.data || {};
 
   event.notification.close();
 
-  if (event.action && event.action !== 'notice' && actionUrl) {
+  if (event.action && event.action !== 'notice' && actionUrl && actionToken) {
     event.waitUntil(
       fetch(actionUrl, {
         method: 'POST',
@@ -45,7 +46,7 @@ self.addEventListener('notificationclick', (event) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ action: event.action })
+        body: JSON.stringify({ action: event.action, token: actionToken })
       }).catch(() => {
         // eslint-disable-next-line no-undef
         return clients.openWindow(url || '/');

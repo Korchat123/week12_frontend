@@ -3,22 +3,24 @@
 @layer base {
   :root {
     color-scheme: light;
-    --color-surface: #fffdf8;
+    --color-surface: #f6fbff;
     --color-panel: #ffffff;
-    --color-panel-muted: #f7f3ee;
-    --color-border: #e6ddd4;
-    --color-text: #24312f;
-    --color-muted: #66736f;
-    --color-brand: #2f7d73;
-    --color-brand-strong: #25685f;
-    --color-brand-soft: #e4f2ee;
-    --shadow-soft: 0 14px 34px rgb(71 55 39 / 0.08);
+    --color-panel-muted: #eef7ff;
+    --color-border: #d8e8f7;
+    --color-text: #183247;
+    --color-muted: #5f7486;
+    --color-brand: #2f80c9;
+    --color-brand-strong: #1f6faf;
+    --color-brand-soft: #e6f4ff;
+    --color-focus: #f59e42;
+    --color-focus-soft: #fff4e6;
+    --shadow-soft: 0 14px 34px rgb(31 111 175 / 0.08);
   }
 
   body {
     @apply m-0 font-sans antialiased;
     background:
-      radial-gradient(circle at top left, rgb(228 242 238 / 0.75), transparent 34rem),
+      radial-gradient(circle at top left, rgb(214 237 255 / 0.9), transparent 34rem),
       var(--color-surface);
     color: var(--color-text);
   }
@@ -35,7 +37,7 @@
   select:focus,
   button:focus-visible,
   a:focus-visible {
-    outline: 3px solid rgb(47 125 115 / 0.22);
+    outline: 3px solid rgb(47 128 201 / 0.22);
     outline-offset: 2px;
   }
 }

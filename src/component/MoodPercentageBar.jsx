@@ -30,12 +30,12 @@ export default function MoodPercentageBar({ notes = [] }) {
   const moods = Object.keys(moodLabels);
 
   return (
-    <div className="mb-8 rounded-xl border border-[#e6ddd4] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
-      <h3 className="text-xl font-bold text-[#24312f]">Mood Check-In</h3>
+    <div className="mb-8 rounded-xl border border-[var(--color-border)] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
+      <h3 className="text-xl font-bold text-[var(--color-text)]">Mood Check-In</h3>
       {!hasNotes && (
-        <p className="mt-2 text-sm text-[#66736f]">No mood entries yet. Add a private note when you want to reflect.</p>
+        <p className="mt-2 text-sm text-[var(--color-muted)]">No mood entries yet. Add a private note when you want to reflect.</p>
       )}
-      <div className="my-4 flex h-5 w-full overflow-hidden rounded-full bg-[#f1ebe4]">
+      <div className="my-4 flex h-5 w-full overflow-hidden rounded-full bg-[var(--color-brand-soft)]">
         {moods.map(mood => {
           const count = counts[mood] || 0;
           const percentage = (count / total) * 100;
@@ -60,7 +60,7 @@ export default function MoodPercentageBar({ notes = [] }) {
           if (count === 0) return null;
 
           return (
-            <div key={mood} className="flex items-center gap-2 text-sm text-[#53615d]">
+            <div key={mood} className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
               <span className="h-3 w-3 rounded-full" style={{ backgroundColor: moodColors[mood] }}></span>
               <span>{moodLabels[mood]} ({Math.round((count / total) * 100)}%)</span>
             </div>

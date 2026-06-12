@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DiaryProvider } from './context/DiaryContext';
@@ -12,20 +12,21 @@ import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import axios from 'axios';
 
-const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || "BCrZjjEpR_BhhrfkOwjFNZbWnQTQ_qxVvkIeNXpPEoy0ZMw-fgzGnIQbOfBnB24sFUNp7027mvocgoapM1Y2hzI";
+const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
 function AppContent() {
   const { user } = useAuth();
+  const [notificationStatus, setNotificationStatus] = useState('');
 
   async function registerPush() {
     try {
       if (!('Notification' in window)) {
-        console.warn('Push notifications are not supported by this browser');
+        setNotificationStatus('Browser notifications are not supported here.');
         return;
       }
 
       if (!VAPID_PUBLIC_KEY) {
-        console.warn('Missing VAPID public key for push notifications');
+        setNotificationStatus('Notification key is not configured.');
         return;
       }
 
@@ -34,13 +35,11 @@ function AppContent() {
         : await Notification.requestPermission();
 
       if (permission !== 'granted') {
-        console.log('Push notifications not allowed');
+        setNotificationStatus('Notification permission was not allowed.');
         return;
       }
 
       const registration = await navigator.serviceWorker.register('/sw.js');
-      console.log('SW Registered');
-
       let subscription = await registration.pushManager.getSubscription();
       const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
 
@@ -60,20 +59,33 @@ function AppContent() {
         subscription,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
       });
-      console.log('Push Subscribed');
+      setNotificationStatus('Browser reminders are enabled.');
     } catch (err) {
       console.error('Push registration failed:', err);
+      setNotificationStatus('Could not enable browser reminders.');
     }
   }
 
-  useEffect(() => {
-    if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
-      registerPush();
-    }
-  }, [user]);
-
   return (
     <main className="mx-auto max-w-6xl px-4 py-6 sm:px-8">
+      {user && (
+        <section className="mb-5 flex flex-col gap-3 rounded-xl border border-[var(--color-border)] bg-white/90 p-4 shadow-[var(--shadow-soft)] sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-base font-bold text-[var(--color-text)]">Browser reminders</h2>
+            <p className="text-sm text-[var(--color-muted)]">
+              Enable notifications only when you want this browser to receive reminders.
+            </p>
+            {notificationStatus && <p className="mt-1 text-sm text-[var(--color-muted)]">{notificationStatus}</p>}
+          </div>
+          <button
+            type="button"
+            onClick={registerPush}
+            className="cursor-pointer rounded-lg border-0 bg-[var(--color-brand)] px-4 py-2 font-semibold text-white hover:bg-[var(--color-brand-strong)]"
+          >
+            Enable reminders
+          </button>
+        </section>
+      )}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

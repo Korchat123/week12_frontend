@@ -15,9 +15,9 @@ const sampleMoodNotes = [
 ];
 
 const proximityClasses = {
-  'prox-red': 'border-[#d98282] bg-[#fff1ef]',
-  'prox-yellow': 'border-[#d9a441] bg-[#fff7e3]',
-  'prox-gray': 'border-[#9fb1ab] bg-[#f3f7f5]'
+  'prox-red': 'border-[var(--color-focus)] bg-[var(--color-focus-soft)]',
+  'prox-yellow': 'border-[var(--color-focus)] bg-[var(--color-focus-soft)]',
+  'prox-gray': 'border-sky-200 bg-[var(--color-panel-muted)]'
 };
 
 const repeatFrequencyOptions = [
@@ -197,6 +197,7 @@ export default function Home() {
     const nextEnabled = reminder.noticeEnabled === false;
     await updateNote(reminder._id, {
       noticeEnabled: nextEnabled,
+      noticeAt: nextEnabled ? (reminder.noticeAt || reminder.reminderDate) : null,
       noticeSentAt: nextEnabled ? null : reminder.noticeSentAt
     });
   };
@@ -222,7 +223,7 @@ export default function Home() {
           <div
             key={r._id}
             onClick={() => handleReminderClick(r)}
-            className={`flex flex-col gap-2 rounded-xl border border-[#e6ddd4] border-t-4 p-5 text-inherit shadow-sm transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)] ${getProximityClass(r.reminderDate)}`}
+            className={`flex flex-col gap-2 rounded-xl border border-[var(--color-border)] border-t-4 p-5 text-inherit shadow-sm transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)] ${getProximityClass(r.reminderDate)}`}
             role="button"
             tabIndex={0}
             onKeyDown={(event) => {
@@ -233,25 +234,27 @@ export default function Home() {
             }}
           >
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-bold tracking-wider text-[#66736f]">{new Date(r.reminderDate).toLocaleDateString()}</span>
+              <span className="text-xs font-bold tracking-wider text-[var(--color-muted)]">{new Date(r.reminderDate).toLocaleDateString()}</span>
               {r.reminderKind === 'daily' && (
-                <span className="rounded-full bg-[#e4f2ee] px-2 py-0.5 text-xs font-semibold text-[#25685f]">
+                <span className="rounded-full bg-[var(--color-brand-soft)] px-2 py-0.5 text-xs font-semibold text-[var(--color-brand-strong)]">
                   {repeatFrequencyLabels[r.repeatFrequency] || 'Always'}
                 </span>
               )}
             </div>
-            <h4 className="text-lg font-semibold text-[#24312f]">{r.topic}</h4>
+            <h4 className="text-lg font-semibold text-[var(--color-text)]">{r.topic}</h4>
             {getReminderDetail(r.detail) && (
-              <p className="text-sm text-[#66736f]">
+              <p className="text-sm text-[var(--color-muted)]">
                 {getReminderDetail(r.detail).substring(0, 100)}{getReminderDetail(r.detail).length > 100 ? '...' : ''}
               </p>
             )}
             <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-2">
-              <div className="text-sm font-semibold text-[#53615d]">
+              <div className="text-sm font-semibold text-[var(--color-muted)]">
                 <span>Event {new Date(r.reminderDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                <span className="ml-3 text-[#66736f]">
-                  Reminder {r.noticeAt ? new Date(r.noticeAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'event time'}
-                </span>
+                {r.noticeEnabled !== false && (
+                  <span className="ml-3 text-[var(--color-muted)]">
+                    Remind {r.noticeAt ? new Date(r.noticeAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'event time'}
+                  </span>
+                )}
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
@@ -262,11 +265,11 @@ export default function Home() {
                   }}
                   className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-bold ${
                     r.noticeEnabled !== false
-                      ? 'border-[#b8d8d1] bg-[#e4f2ee] text-[#25685f] hover:bg-[#d7ebe6]'
-                      : 'border-[#d9cec4] bg-white text-[#66736f] hover:bg-[#f8f4ef]'
+                      ? 'border-sky-200 bg-[var(--color-brand-soft)] text-[var(--color-brand-strong)] hover:bg-sky-100'
+                      : 'border-[var(--color-border)] bg-white text-[var(--color-muted)] hover:bg-[var(--color-panel-muted)]'
                   }`}
                 >
-                  Reminder {r.noticeEnabled !== false ? 'On' : 'Off'}
+                  Remind {r.noticeEnabled !== false ? 'On' : 'Off'}
                 </button>
                 {r.reminderKind === 'daily' && (
                   <button
@@ -275,7 +278,7 @@ export default function Home() {
                       event.stopPropagation();
                       handleReminderAction(r, 'pause-once');
                     }}
-                    className="cursor-pointer rounded-full border border-[#ead9a8] bg-white px-3 py-1 text-xs font-bold text-[#8a6724] hover:bg-[#fff7e3]"
+                    className="cursor-pointer rounded-full border border-orange-200 bg-white px-3 py-1 text-xs font-bold text-orange-700 hover:bg-[var(--color-focus-soft)]"
                   >
                     Skip once
                   </button>
@@ -286,7 +289,7 @@ export default function Home() {
                     event.stopPropagation();
                     handleReminderAction(r, 'stop-always');
                   }}
-                  className="cursor-pointer rounded-full border border-[#d9cec4] bg-white px-3 py-1 text-xs font-bold text-[#66736f] hover:bg-[#f8f4ef]"
+                  className="cursor-pointer rounded-full border border-[var(--color-border)] bg-white px-3 py-1 text-xs font-bold text-[var(--color-muted)] hover:bg-[var(--color-panel-muted)]"
                 >
                   Turn off
                 </button>
@@ -306,38 +309,38 @@ export default function Home() {
         ))}
       </div>
     ) : (
-      <div className="rounded-lg border border-[#e6ddd4] bg-[#f8f4ef] p-4">
-        <p className="text-sm text-[#66736f]">{emptyMessage}</p>
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-panel-muted)] p-4">
+        <p className="text-sm text-[var(--color-muted)]">{emptyMessage}</p>
       </div>
     )
   );
 
   const dailyReminderForm = (
-    <section className="rounded-xl border border-[#e6ddd4] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
-      <h3 className="mb-2 text-2xl font-bold text-[#24312f]">Create Gentle Reminder</h3>
-      <p className="mb-4 text-sm text-[#66736f]">Choose a time and rhythm that supports your day.</p>
+    <section className="rounded-xl border border-[var(--color-border)] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
+      <h3 className="mb-2 text-2xl font-bold text-[var(--color-text)]">Create Reminder</h3>
+      <p className="mb-4 text-sm text-[var(--color-muted)]">Choose a time and rhythm that supports your day.</p>
       <form onSubmit={handleCreateEvent} className="flex flex-col gap-4">
         <input
           value={eventForm.topic}
           onChange={(event) => handleEventFormChange('topic', event.target.value)}
           placeholder="Reminder title"
           required
-          className="rounded-lg border border-[#d9cec4] bg-white/90 p-3 text-[#24312f] focus:border-[#2f7d73]"
+          className="rounded-lg border border-[var(--color-border)] bg-white/90 p-3 text-[var(--color-text)] focus:border-[var(--color-brand)]"
         />
 
         <textarea
           value={eventForm.detail}
           onChange={(event) => handleEventFormChange('detail', event.target.value)}
           placeholder="Notes (optional)"
-          className="min-h-24 resize-y rounded-lg border border-[#d9cec4] bg-white/90 p-3 text-[#24312f] focus:border-[#2f7d73]"
+          className="min-h-24 resize-y rounded-lg border border-[var(--color-border)] bg-white/90 p-3 text-[var(--color-text)] focus:border-[var(--color-brand)]"
         />
 
-        <div className="rounded-lg border border-[#e6ddd4] bg-[#fffdf8] p-3">
+        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-panel-muted)] p-3">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <span className="text-sm font-semibold text-[#53615d]">Days</span>
+            <span className="text-sm font-semibold text-[var(--color-muted)]">Days</span>
             <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={() => handleEventFormChange('repeatDays', dayPresets.weekdays)} className="cursor-pointer rounded-full border border-[#d9cec4] bg-white px-3 py-1 text-xs font-semibold text-[#53615d] hover:bg-[#f8f4ef]">Weekdays</button>
-              <button type="button" onClick={() => handleEventFormChange('repeatDays', dayPresets.weekend)} className="cursor-pointer rounded-full border border-[#d9cec4] bg-white px-3 py-1 text-xs font-semibold text-[#53615d] hover:bg-[#f8f4ef]">Weekend</button>
+              <button type="button" onClick={() => handleEventFormChange('repeatDays', dayPresets.weekdays)} className="cursor-pointer rounded-full border border-[var(--color-border)] bg-white px-3 py-1 text-xs font-semibold text-[var(--color-muted)] hover:bg-sky-50">Weekdays</button>
+              <button type="button" onClick={() => handleEventFormChange('repeatDays', dayPresets.weekend)} className="cursor-pointer rounded-full border border-[var(--color-border)] bg-white px-3 py-1 text-xs font-semibold text-[var(--color-muted)] hover:bg-sky-50">Weekend</button>
             </div>
           </div>
           <div className="grid grid-cols-7 gap-2">
@@ -351,8 +354,8 @@ export default function Home() {
                   onClick={() => toggleRepeatDay(day.value)}
                   className={`cursor-pointer rounded-lg border px-2 py-2 text-xs font-bold ${
                     isSelected
-                      ? 'border-[#2f7d73] bg-[#2f7d73] text-white'
-                      : 'border-[#d9cec4] bg-white text-[#66736f] hover:bg-[#f8f4ef]'
+                      ? 'border-[var(--color-brand)] bg-[var(--color-brand)] text-white'
+                      : 'border-[var(--color-border)] bg-white text-[var(--color-muted)] hover:bg-sky-50'
                   }`}
                 >
                   {day.label}
@@ -362,44 +365,46 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-sm font-semibold text-[#53615d]">
+        <div className={`grid grid-cols-1 gap-3 ${eventForm.noticeEnabled ? 'sm:grid-cols-2' : ''}`}>
+          <label className="flex flex-col gap-1 text-sm font-semibold text-[var(--color-muted)]">
             Repeat
             <select
               value={eventForm.repeatFrequency}
               onChange={(event) => handleEventFormChange('repeatFrequency', event.target.value)}
-              className="rounded-lg border border-[#d9cec4] bg-white/90 p-3 font-normal text-[#24312f] focus:border-[#2f7d73]"
+              className="rounded-lg border border-[var(--color-border)] bg-white/90 p-3 font-normal text-[var(--color-text)] focus:border-[var(--color-brand)]"
             >
               {repeatFrequencyOptions.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-1 text-sm font-semibold text-[#53615d]">
-            Reminder time
-            <input
-              type="time"
-              value={eventForm.noticeTime}
-              onChange={(event) => handleEventFormChange('noticeTime', event.target.value)}
-              className="rounded-lg border border-[#d9cec4] bg-white/90 p-3 font-normal text-[#24312f] focus:border-[#2f7d73]"
-            />
-          </label>
+          {eventForm.noticeEnabled && (
+            <label className="flex flex-col gap-1 text-sm font-semibold text-[var(--color-muted)]">
+              Remind time
+              <input
+                type="time"
+                value={eventForm.noticeTime}
+                onChange={(event) => handleEventFormChange('noticeTime', event.target.value)}
+                className="rounded-lg border border-[var(--color-border)] bg-white/90 p-3 font-normal text-[var(--color-text)] focus:border-[var(--color-brand)]"
+              />
+            </label>
+          )}
         </div>
 
-        <label className="flex items-center gap-3 text-sm font-semibold text-[#53615d]">
+        <label className="flex items-center gap-3 text-sm font-semibold text-[var(--color-muted)]">
           <input
             type="checkbox"
             checked={eventForm.noticeEnabled}
             onChange={(event) => handleEventFormChange('noticeEnabled', event.target.checked)}
             className="h-4 w-4"
           />
-          Gentle reminder
+          Remind me
         </label>
 
-        <button type="submit" className="cursor-pointer rounded-lg border-0 bg-[#2f7d73] p-3 font-bold text-white hover:bg-[#25685f]">
+        <button type="submit" className="cursor-pointer rounded-lg border-0 bg-[var(--color-brand)] p-3 font-bold text-white hover:bg-[var(--color-brand-strong)]">
           Create Reminder
         </button>
-        {eventStatus && <p className="text-sm text-[#66736f]">{eventStatus}</p>}
+        {eventStatus && <p className="text-sm text-[var(--color-muted)]">{eventStatus}</p>}
       </form>
     </section>
   );
@@ -408,11 +413,11 @@ export default function Home() {
     return (
       <div className="px-4 py-8 text-center md:px-8 md:py-14">
         <header>
-          <h1 className="mb-4 text-4xl font-bold text-[#24312f] md:text-5xl">Mindful Diary</h1>
-          <p className="mx-auto max-w-2xl text-[#66736f]">A private place for mood check-ins, reflections, and gentle reminders.</p>
+          <h1 className="mb-4 text-4xl font-bold text-[var(--color-text)] md:text-5xl">Remide Mood</h1>
+          <p className="mx-auto max-w-2xl text-[var(--color-muted)]">A private place for mood check-ins, reflections, and gentle reminders.</p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <Link to="/login" className="w-full rounded-lg bg-[#2f7d73] px-8 py-3 font-bold text-white no-underline hover:bg-[#25685f] sm:w-auto">Login</Link>
-            <Link to="/register" className="w-full rounded-lg border border-[#2f7d73] bg-white/70 px-8 py-3 font-bold text-[#2f7d73] no-underline hover:bg-[#e4f2ee] sm:w-auto">Get Started</Link>
+            <Link to="/login" className="w-full rounded-lg bg-[var(--color-brand)] px-8 py-3 font-bold text-white no-underline hover:bg-[var(--color-brand-strong)] sm:w-auto">Login</Link>
+            <Link to="/register" className="w-full rounded-lg border border-[var(--color-brand)] bg-white/70 px-8 py-3 font-bold text-[var(--color-brand)] no-underline hover:bg-[var(--color-brand-soft)] sm:w-auto">Get Started</Link>
           </div>
         </header>
 
@@ -421,22 +426,22 @@ export default function Home() {
         </section>
 
         <section className="mt-12 md:mt-20">
-          <h3 className="text-2xl font-bold text-[#24312f]">Example Gentle Reminders</h3>
+          <h3 className="text-2xl font-bold text-[var(--color-text)]">Example Reminders</h3>
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="flex flex-col gap-2 rounded-xl border border-[#efcfca] border-t-4 bg-[#fff1ef] p-6 text-left shadow-sm transition hover:-translate-y-0.5">
-              <span className="text-xs font-bold tracking-wider text-[#66736f]">TOMORROW</span>
-              <h4 className="text-xl font-semibold text-[#24312f]">Check In With Yourself</h4>
-              <p className="text-sm text-[#66736f]">Take a moment to write what feels important.</p>
+            <div className="flex flex-col gap-2 rounded-xl border border-orange-200 border-t-4 bg-[var(--color-focus-soft)] p-6 text-left shadow-sm transition hover:-translate-y-0.5">
+              <span className="text-xs font-bold tracking-wider text-[var(--color-muted)]">TOMORROW</span>
+              <h4 className="text-xl font-semibold text-[var(--color-text)]">Check In With Yourself</h4>
+              <p className="text-sm text-[var(--color-muted)]">Take a moment to write what feels important.</p>
             </div>
-            <div className="flex flex-col gap-2 rounded-xl border border-[#ead9a8] border-t-4 bg-[#fff7e3] p-6 text-left shadow-sm transition hover:-translate-y-0.5">
-              <span className="text-xs font-bold tracking-wider text-[#66736f]">IN 3 DAYS</span>
-              <h4 className="text-xl font-semibold text-[#24312f]">Prepare for Appointment</h4>
-              <p className="text-sm text-[#66736f]">Bring notes and questions you want to remember.</p>
+            <div className="flex flex-col gap-2 rounded-xl border border-orange-200 border-t-4 bg-[var(--color-focus-soft)] p-6 text-left shadow-sm transition hover:-translate-y-0.5">
+              <span className="text-xs font-bold tracking-wider text-[var(--color-muted)]">IN 3 DAYS</span>
+              <h4 className="text-xl font-semibold text-[var(--color-text)]">Prepare for Appointment</h4>
+              <p className="text-sm text-[var(--color-muted)]">Bring notes and questions you want to remember.</p>
             </div>
-            <div className="flex flex-col gap-2 rounded-xl border border-[#d9cec4] border-t-4 bg-[#f8f4ef] p-6 text-left shadow-sm transition hover:-translate-y-0.5">
-              <span className="text-xs font-bold tracking-wider text-[#66736f]">NEXT WEEK</span>
-              <h4 className="text-xl font-semibold text-[#24312f]">Small Care Task</h4>
-              <p className="text-sm text-[#66736f]">Make space for one practical thing that helps your week.</p>
+            <div className="flex flex-col gap-2 rounded-xl border border-[var(--color-border)] border-t-4 bg-[var(--color-panel-muted)] p-6 text-left shadow-sm transition hover:-translate-y-0.5">
+              <span className="text-xs font-bold tracking-wider text-[var(--color-muted)]">NEXT WEEK</span>
+              <h4 className="text-xl font-semibold text-[var(--color-text)]">Small Care Task</h4>
+              <p className="text-sm text-[var(--color-muted)]">Make space for one practical thing that helps your week.</p>
             </div>
           </div>
         </section>
@@ -447,8 +452,8 @@ export default function Home() {
   return (
     <div>
       <header>
-        <h1 className="text-3xl font-bold text-[#24312f]">Hello, {user.name || user.username}</h1>
-        <p className="mt-2 text-[#66736f]">Your private reflections and reminders at a glance.</p>
+        <h1 className="text-3xl font-bold text-[var(--color-text)]">Hello, {user.name || user.username}</h1>
+        <p className="mt-2 text-[var(--color-muted)]">Your private reflections and reminders at a glance.</p>
       </header>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
@@ -465,13 +470,13 @@ export default function Home() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-xl border border-[#e6ddd4] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
-          <h3 className="mb-4 text-2xl font-bold text-[#24312f]">Repeating Reminders</h3>
+        <section className="rounded-xl border border-[var(--color-border)] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
+          <h3 className="mb-4 text-2xl font-bold text-[var(--color-text)]">Repeating Reminders</h3>
           {renderReminderList(dailyReminders, 'No upcoming repeating reminders.')}
         </section>
 
-        <section className="rounded-xl border border-[#e6ddd4] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
-          <h3 className="mb-4 text-2xl font-bold text-[#24312f]">Event Reminders</h3>
+        <section className="rounded-xl border border-[var(--color-border)] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
+          <h3 className="mb-4 text-2xl font-bold text-[var(--color-text)]">Event Reminders</h3>
           {renderReminderList(eventReminders, 'No upcoming event reminders.')}
         </section>
       </div>

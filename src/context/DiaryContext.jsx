@@ -2,12 +2,16 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { formatLocalDateTime, getUserTimeZone, localDateTimeToIso } from '../utils/dateTime';
+import { useAuth } from './AuthContext';
 
 const DiaryContext = createContext();
 
 export const DiaryProvider = ({ children }) => {
+  const { user } = useAuth();
   const [notes, setNotes] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     reminderDate: '',
     topic: '',
@@ -27,17 +31,23 @@ export const DiaryProvider = ({ children }) => {
 
   const fetchNotes = async () => {
     try {
+      setErrorMessage('');
       const response = await axios.get('api/v2/notes');
       setNotes(response.data.data);
     } catch (error) {
       console.error('Failed to fetch notes', error);
+      setErrorMessage('Could not load your entries.');
     }
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchNotes();
-  }, []);
+    if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      fetchNotes();
+    } else {
+      setNotes([]);
+    }
+  }, [user]);
 
   const resetForm = () => {
     setFormData({
@@ -55,18 +65,21 @@ export const DiaryProvider = ({ children }) => {
   const createNote = async (payload) => {
     const response = await axios.post('api/v2/notes', payload);
     await fetchNotes();
+    setStatusMessage('Entry saved.');
     return response.data.data;
   };
 
   const updateNote = async (id, payload) => {
     const response = await axios.put(`api/v2/notes/${id}`, payload);
     await fetchNotes();
+    setStatusMessage('Entry updated.');
     return response.data.data;
   };
 
   const runReminderAction = async (id, action) => {
     const response = await axios.post(`api/v2/notes/${id}/reminder-action`, { action });
     await fetchNotes();
+    setStatusMessage('Reminder updated.');
     return response.data.data;
   };
 
@@ -74,17 +87,20 @@ export const DiaryProvider = ({ children }) => {
     await axios.delete(`api/v2/notes/${id}`);
     if (editingId === id) resetForm();
     await fetchNotes();
+    setStatusMessage('Entry deleted.');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setErrorMessage('');
+      setStatusMessage('');
       const reminderDate = localDateTimeToIso(formData.reminderDate);
       const noticeAt = localDateTimeToIso(formData.noticeAt) || reminderDate;
       const payload = {
         ...formData,
         reminderDate: reminderDate || null,
-        noticeAt: reminderDate ? noticeAt : null,
+        noticeAt: reminderDate && formData.noticeEnabled ? noticeAt : null,
         noticeEnabled: reminderDate ? formData.noticeEnabled : false,
         userTimeZone: getUserTimeZone(),
         type: reminderDate ? 'reminder' : 'diary',
@@ -100,6 +116,7 @@ export const DiaryProvider = ({ children }) => {
       resetForm();
     } catch (error) {
       console.error('Failed to save note', error);
+      setErrorMessage(error.response?.data?.error || 'Could not save this entry.');
     }
   };
 
@@ -110,6 +127,7 @@ export const DiaryProvider = ({ children }) => {
       await deleteNote(id);
     } catch (error) {
       console.error('Delete failed', error);
+      setErrorMessage(error.response?.data?.error || 'Could not delete this entry.');
     }
   };
 
@@ -121,7 +139,7 @@ export const DiaryProvider = ({ children }) => {
       detail: note.detail,
       feeling: note.feeling,
       result: note.result || '',
-      noticeAt: formatLocalDateTime(note.noticeAt || note.reminderDate),
+      noticeAt: note.noticeEnabled === false ? '' : formatLocalDateTime(note.noticeAt || note.reminderDate),
       noticeEnabled: note.noticeEnabled !== false
     });
   };
@@ -167,6 +185,10 @@ export const DiaryProvider = ({ children }) => {
     editingId,
     formData,
     setFormData,
+    statusMessage,
+    setStatusMessage,
+    errorMessage,
+    setErrorMessage,
     searchQuery,
     setSearchQuery,
     filterDate,
